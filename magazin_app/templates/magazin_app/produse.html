@@ -1,0 +1,162 @@
+{% extends "magazin_app/baza.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'magazin_app/css/produse.css' %}">
+{% endblock %}
+
+{% block title %}Produse{% endblock %}
+
+{% block content %}
+
+<h1 style="text-align:center;">
+  {% if categorie %}
+    Produsele din categoria <span style="color:{{ categorie.culoare }};">{{ categorie.name }}</span>
+  {% else %}
+    Lista produselor disponibile
+  {% endif %}
+</h1>
+
+<form method="get" class="filtru-produse">
+  <fieldset>
+    <legend><strong>Filtrare produse</strong></legend>
+    {{ form.as_p }}
+
+    <button type="submit" class="apply-btn">Aplică filtre</button>
+
+    {% if categorie %}
+  <button type="button" class="reset-btn"
+          onclick="window.location.href='{% url 'categorie_detalii' categorie.name|lower %}'">
+    Resetează filtre
+  </button>
+    {% else %}
+  <button type="button" class="reset-btn"
+          onclick="window.location.href='{% url 'produse' %}'">
+    Resetează filtre
+  </button>
+    {% endif %}
+
+  </fieldset>
+</form>
+
+
+{% if page_obj %}
+  <div class="produse-container">
+    <style>
+      .produs-indisponibil { background-color: #e9e9e9 !important; opacity: 0.6; }
+      .text-rosu { color: red; font-weight: bold; }
+      .in-cos-badge { 
+        border: 2px solid #28a745; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        background: #f8fff9; 
+        display: none; 
+        margin-top: 10px;
+      }
+    </style>
+
+    {% for produs in page_obj %}
+      <div class="produs-card {% if produs.stock_quantity == 0 %}produs-indisponibil{% endif %}" id="card-{{ produs.produs_id }}">
+        <i class="{{ produs.categorie.icon }}" style="color: {{ produs.categorie.culoare }}; font-size: 1.4rem;"></i>
+        <h2>
+          <a href="{% url 'produs_detalii' produs.produs_id %}">{{ produs.name }}</a>
+        </h2>
+        <p><strong>Pret:</strong> {{ produs.price }} RON</p>
+        
+        <p><strong>Stoc:</strong>
+            {% if produs.stock_quantity == 0 %}
+                <span class="text-rosu">indisponibil</span>
+            {% else %}
+                <span>{{ produs.stock_quantity }} bucati</span>
+            {% endif %}
+        </p>
+
+        {% if produs.stock_quantity > 0 %}
+            <button class="apply-btn" 
+                    onclick="adaugareSimpla('{{ produs.produs_id }}', '{{ produs.name }}', {{ produs.price }}, {{ produs.stock_quantity }})">
+                Adaugă în coș
+            </button>
+        {% endif %}
+
+        <div id="status-{{ produs.produs_id }}" class="in-cos-badge">
+             În coș: <span class="badge-qty">0</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="paginare">
+    {% if page_obj.has_previous %}
+      <a href="?page=1&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">« Prima</a>
+      <a href="?page={{ page_obj.previous_page_number }}&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">‹ Înapoi</a>
+    {% endif %}
+
+    <span>Pagina {{ page_obj.number }} din {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">Înainte ›</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">Ultima »</a>
+    {% endif %}
+
+    <a href="?page={{ salt_3 }}&salt=1&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">Sari 3 pagini</a>
+</div>
+
+  <script>
+   function adaugareSimpla(id, name, price, stock_quantity) {
+    let cos = JSON.parse(localStorage.getItem('cos_virtual')) || {};
+
+    if (!cos[id]) {
+        cos[id] = { 
+            name: name, 
+            price: parseFloat(price), 
+            qty: 1, 
+            stock_quantity: parseInt(stock_quantity) 
+        };
+    } else {
+        if (cos[id].qty < cos[id].stock_quantity) {
+            cos[id].qty += 1;
+        } else {
+            alert("Stoc maxim atins!");
+            return;
+        }
+    }
+
+    localStorage.setItem('cos_virtual', JSON.stringify(cos));
+    refreshBife();
+    console.log("Salvat în LocalStorage:", cos[id]);
+}
+    function refreshBife() {
+        let cos = JSON.parse(localStorage.getItem('cos_virtual')) || {};
+        document.querySelectorAll('.in-cos-badge').forEach(el => el.style.display = 'none');
+
+        for (let id in cos) {
+            let element = document.getElementById('status-' + id);
+            if (element) {
+                element.style.display = 'block';
+                element.querySelector('.badge-qty').innerText = cos[id].qty;
+            }
+        }
+    }
+
+    window.onload = refreshBife;
+</script>
+
+{% else %}
+  <p style="text-align:center; color:gray;">Nu s-au găsit produse care corespund filtrului.</p>
+{% endif %}
+
+<div class="paginare">
+  {% if page_obj.has_previous %}
+    <a href="?page=1{% if sortare != 'none' %}&sort={{ sortare }}{% endif %}">« Prima</a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if sortare != 'none' %}&sort={{ sortare }}{% endif %}">‹ Înapoi</a>
+  {% endif %}
+
+  <span>Pagina {{ page_obj.number }} din {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if sortare != 'none' %}&sort={{ sortare }}{% endif %}">Înainte ›</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}{% if sortare != 'none' %}&sort={{ sortare }}{% endif %}">Ultima »</a>
+  {% endif %}
+</div>
+
+{% endblock %}

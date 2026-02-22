@@ -1,0 +1,22 @@
+{% extends "magazin_app/baza.html" %}
+
+{% block title %}Profil utilizator{% endblock %}
+
+{% block content %}
+  <section class="profil">
+    <h2>Bine ai venit, {{ user.username }}!</h2>
+
+    <ul>
+      <li><strong>Email:</strong> {{ user.email }}</li>
+      <li><strong>Telefon:</strong> {{ user.nr_tel }}</li>
+      <li><strong>Țară:</strong> {{ user.tara }}</li>
+      <li><strong>Adresă:</strong> {{ user.adresa }}</li>
+      <li><strong>VIP:</strong> {{ user.vip|yesno:"Da,Nu" }}</li>
+    </ul>
+
+    <p>
+      <a href="{% url 'change_password' %}" class="btn">Schimbă parola</a> |
+      <a href="{% url 'logout' %}" class="btn">Logout</a>
+    </p>
+  </section>
+{% endblock %}

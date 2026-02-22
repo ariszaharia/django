@@ -1,0 +1,19 @@
+{
+    "date_utilizator": {
+        "ip_client": "127.0.0.1",
+        "data_trimiterii": "2025-11-03 17:57:31"
+    },
+    "formular": {
+        "nume": "Zaharia",
+        "prenume": "Aris",
+        "cnp": "5051219440030",
+        "data_nasterii": "2005-12-19",
+        "email": "aris.zaharidis@gmail.com",
+        "tip_mesaj": "reclamatie",
+        "subiect": "Idk",
+        "minim_zile_asteptare": 3,
+        "mesaj": "bla bla bla bla Zaharia",
+        "varsta_formatata": "19 ani și 10 luni",
+        "urgent": false
+    }
+}

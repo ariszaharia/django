@@ -1,0 +1,34 @@
+{% extends 'magazin_app/baza.html' %}
+{% block title %}Jurnal accesari{% endblock %}
+
+{% block content %}
+<h1>Jurnal accesari</h1>
+
+{% for m in mesaje %}
+  <p>{{ m|safe }}</p>
+{% empty %}
+  <p>Nu există accesări înregistrate.</p>
+{% endfor %}
+
+{% if tabel %}
+  <table border = "2">
+    <tr>
+      {% for col in coloane %}
+        <th>{{ col }}</th>
+      {% endfor %}
+    </tr>
+    {% for rand in tabel %}
+      <tr>
+        {% for celula in rand %}
+          <td>{{ celula }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+
+{% if rezumat %}
+  <h2>Cea mai accesată pagină: {{ rezumat.cea_mai_frecventa }} ({{ rezumat.nr_max }} accesări)</h2>
+  <h2>Cea mai puțin accesată pagină: {{ rezumat.cea_mai_putin_frecventa }} ({{ rezumat.nr_min }} accesări)</h2>
+{% endif %}
+{% endblock %}

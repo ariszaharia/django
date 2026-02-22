@@ -1,0 +1,16 @@
+{% extends "magazin_app/baza.html" %}
+{% block title %}{{ produs.name }}{% endblock %}
+
+{% block content %}
+  <div class="produs-detalii">
+    <h1>{{ produs.name }}</h1>
+    <p><strong>Preț:</strong> {{ produs.price }} RON</p>
+    <p><strong>Categorie:</strong> {{ produs.categorie.name }}</p>
+    <p><strong>Greutate:</strong> {{ produs.weight }} g</p>
+    <p><strong>Stoc:</strong> {{ produs.stock_quantity }} bucăți</p>
+    <p><strong>Furnizor:</strong> {{ produs.furnizor.name }}</p>
+  
+  </div>
+
+  <a href="{% url 'produse' %}" class="btn-back">← Înapoi la produse</a>
+{% endblock %}

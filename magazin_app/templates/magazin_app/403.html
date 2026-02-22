@@ -1,0 +1,33 @@
+{% extends "magazin_app/baza.html" %}
+
+{% block content %}
+
+<div style="padding: 20px;">
+
+    {% if utilizator %}
+        <p>Salut <strong>{{ utilizator.username }}</strong>!</p>
+    {% else %}
+        <p>Salut preastimate anonim!</p>
+    {% endif %}
+
+    <h1>
+        {% if titlu %}
+            {{ titlu }}
+        {% else %}
+            Eroare 403
+        {% endif %}
+    </h1>
+
+    <p>{{ mesaj_personalizat }}</p>
+
+    <p>Ai ajuns pe această pagină de <strong>{{ nr_403 }}</strong> ori în această sesiune.</p>
+
+    {% if nr_403 > limita %}
+        <p style="color: red; font-weight: bold;">
+            Atenție! Ai depășit limita de accesări 403. Ar putea indica o problemă de permisiuni!
+        </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

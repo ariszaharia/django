@@ -1,0 +1,13 @@
+{% extends "magazin_app/baza.html" %}
+{% block content %}
+
+<h2 style="margin-bottom:20px;">Creare promoții</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button class="btn btn-primary">Trimite promoțiile</button>
+</form>
+
+{% endblock %}

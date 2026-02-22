@@ -1,0 +1,56 @@
+<html>
+<head>
+    <style>
+        body { font-family: Helvetica, sans-serif; color: #333; }
+        .header { background-color: #1a2a6c; color: white; padding: 25px; text-align: center; }
+        .info-client { background-color: #f7f7f7; padding: 15px; border-left: 5px solid #b21f1f; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #f2f2f2; border: 1px solid #ddd; padding: 10px; font-weight: bold; }
+        td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        .link { color: #1a2a6c; text-decoration: underline; }
+        .total { font-size: 20px; font-weight: bold; color: #b21f1f; text-align: right; margin-top: 20px; }
+        .footer { font-size: 10px; margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>FACTURa DE CUMPARATURI</h1>
+        <p>Realizata la: {{ data_ora }}</p>
+    </div>
+
+    <div class="info-client">
+        <h3>Date Client:</h3>
+        <p>Nume: <b>{{ user.last_name }} {{ user.first_name }}</b><br>
+        Email: {{ user.email }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Produs</th>
+                <th>Pret Unitar</th>
+                <th>Cantitate</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in produse %}
+            <tr>
+                <td>{{ p.name }}</a></td>
+                <td>{{ p.price }} RON</td>
+                <td>{{ p.qty }}</td>
+                <td>{{ p.total }} RON</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total">
+        TOTAL FINAL: {{ comanda.valoare }} RON
+    </div>
+
+    <div class="footer">
+        <p>Pentru întrebari, contactati administratorul la: {{ admin_email }}</p>
+    </div>
+</body>
+</html>

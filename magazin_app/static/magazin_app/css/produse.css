@@ -1,0 +1,102 @@
+.produse-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 25px;
+  margin-top: 40px;
+}
+
+
+
+.reset-btn:hover {
+  background-color: #999;
+}
+
+
+
+.produs-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 20px;
+  background: #fff;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.produs-card:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+.produs-card h2 {
+  font-size: 1.2rem;
+  color: #0074d9;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.produs-card h2 a {
+  color: #0074d9;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.produs-card h2 a:hover {
+  color: #005bb5;
+}
+
+.produs-card i {
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+.produs-card p {
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.produs-card strong {
+  color: #000;
+}
+
+
+
+.paginare {
+  text-align: center;
+  margin: 40px 0 20px;
+  font-size: 0.95rem;
+}
+
+.paginare a {
+  color: #0074d9;
+  text-decoration: none;
+  margin: 0 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: background 0.3s ease, color 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.paginare a:hover {
+  background: #0074d9;
+  color: #fff;
+  border-color: #0074d9;
+}
+
+.paginare span {
+  color: #444;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .produse-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .produs-card {
+    padding: 15px;
+  }
+}

@@ -1,0 +1,17 @@
+{% extends "magazin_app/baza.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-success text-center p-4 shadow-sm">
+        <h2>Email confirmat cu succes!</h2>
+
+        <p class="lead">
+            Mulțumim, <strong>{{ user.username }}</strong>.
+        </p>
+
+        <p>Contul tau a fost activat. Te poti autentifica acum.</p>
+
+        <a href="{% url 'login' %}" class="btn btn-primary mt-3">Mergi la login</a>
+    </div>
+</div>
+{% endblock %}

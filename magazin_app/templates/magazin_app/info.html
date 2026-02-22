@@ -1,0 +1,14 @@
+{% extends "magazin_app/baza.html" %}
+
+{% block title %}Informatii despre server{% endblock %}
+{% block content %}
+    <h1>Informatii despre server</h1>
+    {{ html_content|safe }}
+    <h2>Numar parametri: {{ nr_parametri }}</h2>
+    <h2>Parametrii:</h2>
+    <ul>
+        {% for key, value in parametrii %}
+            <li>{{ key }} = {{ value }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

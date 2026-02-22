@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: django_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=fitness
+      - POSTGRES_USER=aris
+      - POSTGRES_PASSWORD=aris
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: django_web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgres://aris:aris@db:5432/fitness
+      - DEBUG=1
+      - SECRET_KEY=cheie_temporara_pentru_dev
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

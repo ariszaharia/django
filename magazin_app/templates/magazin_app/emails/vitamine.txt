@@ -1,0 +1,14 @@
+SUBIECT: {{ subiect }}
+
+Salut {{ user.username }},
+
+Avem o promoție specială la vitamine!
+
+Promoția expiră pe {{ data_expirare }}
+Reducere: {{ reducere }}%
+Descriere: {{ descriere }}
+
+Mesaj personalizat:
+{{ mesaj }}
+
+Spor la cumpărături!

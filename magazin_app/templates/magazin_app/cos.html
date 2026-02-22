@@ -1,0 +1,162 @@
+{% extends "magazin_app/baza.html" %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: sans-serif;">
+    <h1 style="text-align:center;">Coșul Meu</h1>
+
+    <div id="tabel-cos-container">
+        </div>
+
+    <div id="actiuni-cos" style="text-align: right; margin-top: 20px; display: none;">
+        <button onclick="golesteCosul()" style="background: #dc3545; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px;">Golește Coșul</button>
+        <button onclick="finalizeazaComanda()" style="background: #28a745; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; margin-left: 10px;">Finalizează Comanda</button>
+    </div>
+</div>
+
+<script>
+    function randareCos() {
+        const dateRaw = localStorage.getItem('cos_virtual');
+        const cos = (dateRaw && dateRaw !== "undefined") ? JSON.parse(dateRaw) : {};
+        const container = document.getElementById('tabel-cos-container');
+        const actiuniCos = document.getElementById('actiuni-cos');
+        
+        let produse = Object.keys(cos).map(id => ({ id: id, ...cos[id] }));
+
+        if (produse.length === 0) {
+            container.innerHTML = "<div style='text-align:center; padding: 50px;'><h3>Coșul tău este gol!</h3><br><a href='/produse/'>Mergi la cumpărături</a></div>";
+            actiuniCos.style.display = "none";
+            return;
+        }
+
+        actiuniCos.style.display = "block";
+        let totalGeneral = 0;
+        let nrTotalObiecte = 0;
+
+        let html = `
+            <table style="width:100%; border-collapse: collapse; text-align: center; border: 1px solid #ddd;">
+                <thead>
+                    <tr style="background: #f4f4f4;">
+                        <th style="padding: 12px; border: 1px solid #ddd;">Produs</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Preț Unitar</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Cantitate</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Subtotal</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Actiuni</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+        produse.forEach(p => {
+            let idPentruLink = p.produs_id || p.id; 
+            
+            let pretUnitar = parseFloat(p.price) || 0; 
+            let cantitate = parseInt(p.qty) || 0;
+            let numeProdus = p.name || "Produs";
+
+            let subtotal = pretUnitar * cantitate;
+            totalGeneral += subtotal;
+            nrTotalObiecte += cantitate;
+
+            html += `
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        <a href="/produse/${idPentruLink}/" style="text-decoration: none; color: #007bff; font-weight: bold;">
+                            ${numeProdus}
+                        </a>
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">${pretUnitar.toFixed(2)} RON</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        <button onclick="modificaCantitate('${p.id}', -1)" style="padding: 2px 8px; cursor:pointer;">-</button>
+                        <span style="margin: 0 10px; font-weight: bold;">${cantitate}</span>
+                        <button onclick="modificaCantitate('${p.id}', 1)" style="padding: 2px 8px; cursor:pointer;">+</button>
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">${subtotal.toFixed(2)} RON</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        <button onclick="stergeProdus('${p.id}')" style="background: none; border: 1px solid red; color: red; cursor: pointer; padding: 4px 8px;">Șterge</button>
+                    </td>
+                </tr>`;
+        });
+
+        html += `
+                </tbody>
+                <tfoot>
+                    <tr style="background: #fefefe; font-weight: bold;">
+                        <td colspan="2" style="padding: 15px; border: 1px solid #ddd; text-align: left;">TOTAL GENERAL</td>
+                        <td style="padding: 15px; border: 1px solid #ddd;">${nrTotalObiecte} piese</td>
+                        <td colspan="2" style="padding: 15px; border: 1px solid #ddd; color: #28a745; font-size: 1.2em;">${totalGeneral.toFixed(2)} RON</td>
+                    </tr>
+                </tfoot>
+            </table>`;
+
+        container.innerHTML = html;
+    }
+
+    function modificaCantitate(id, delta) {
+        let cos = JSON.parse(localStorage.getItem('cos_virtual')) || {};
+        if (!cos[id]) return;
+
+        let nouaCantitate = cos[id].qty + delta;
+
+        if (nouaCantitate <= 0) {
+            if(confirm("Elimini produsul din coș?")) delete cos[id];
+        } else {
+            if (delta > 0 && cos[id].stock_quantity && nouaCantitate > cos[id].stock_quantity) {
+                alert("Stoc limitat!");
+                return;
+            }
+            cos[id].qty = nouaCantitate;
+        }
+        localStorage.setItem('cos_virtual', JSON.stringify(cos));
+        randareCos();
+    }
+
+    function stergeProdus(id) {
+        if(confirm("Sigur stergi produsul?")) {
+            let cos = JSON.parse(localStorage.getItem('cos_virtual')) || {};
+            delete cos[id];
+            localStorage.setItem('cos_virtual', JSON.stringify(cos));
+            randareCos();
+        }
+    }
+
+    function golesteCosul() {
+        if(confirm("Golești tot coșul?")) {
+            localStorage.removeItem('cos_virtual');
+            randareCos();
+        }
+    }
+
+    function finalizeazaComanda() {
+    const dateRaw = localStorage.getItem('cos_virtual');
+    const cos = JSON.parse(dateRaw);
+
+    if (!cos || Object.keys(cos).length === 0) {
+        alert("Coșul este gol!");
+        return;
+    }
+
+    fetch('/finalizeaza_comanda/', {
+        method: "POST",
+        headers: {
+            'Content-Type': "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: dateRaw
+    })
+    .then(response => response.json()) 
+    .then(result => {                  
+        if (result.success) {
+            localStorage.removeItem('cos_virtual');
+            alert("Comanda a fost finalizata cu succes! Factura a fost trimisă pe email.");
+            location.reload(); 
+        } else {
+            alert("Eroare: " + (result.error || "Eroare la finalizarea comenzii."));
+        }
+    })
+    .catch(error => {
+        console.error("Eroare rețea:", error);
+        alert("A apărut o problemă de comunicare cu serverul.");
+    });
+}
+    window.onload = randareCos;
+</script>
+{% endblock %}

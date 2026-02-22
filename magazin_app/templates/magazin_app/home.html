@@ -1,0 +1,61 @@
+{% extends 'magazin_app/baza.html' %}
+{% block title %}Pagina principală{% endblock %}
+{% load static %}
+
+{% block content %}
+  <h1 style="text-align: center;">Zaharia Aris Cristian</h1>
+  <br>
+  <h2 style="text-align: center;">Proiect Magazin Fitness</h2>
+  {% if request.session.user_id %}
+<script>
+    if (Math.random() < 0.3) {
+        const banner = document.createElement("div");
+        banner.innerHTML = `
+            <div id="oferta-banner" style="
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: red;
+                color: white;
+                padding: 20px;
+                border-radius: 10px;
+                cursor: pointer;
+                animation: pulse 1s infinite;
+            ">
+                Oferta! Reducere 50%! Click aici!
+            </div>
+
+            <style>
+                @keyframes pulse {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.1); }
+                    100% { transform: scale(1); }
+                }
+            </style>
+        `;
+        document.body.appendChild(banner);
+
+        document.getElementById("oferta-banner").onclick = function() {
+            window.location.href = "/activeaza_oferta/";
+        }
+    }
+</script>
+{% endif %}
+
+  <br>
+  <h3>
+    Proiectul meu are ca scop realizarea unui site comerical dedicat unui magazin de suplimente pentru fitness. 
+    Platforma permite utilizatorilor să exploreze și să cumpere produse din diverse categorii, 
+    precum proteine, creatină, vitamine sau batoane nutritive, prin intermediul unui coș de cumpărături virtual. 
+    Fiecare supliment dispune de o pagină proprie unde sunt prezentate detalii esențiale: prețul, lista ingredientelor, 
+    doza recomandată și beneficiile principale. Pentru a găsi mai ușor produsele potrivite, 
+    vizitatorii pot aplica filtre după criterii precum preț, tipul de supliment sau obiectivele de fitness urmărite. 
+    De asemenea, platforma oferă posibilitatea de a contacta direct echipa de suport clienți. Funcționalitățile avansate, 
+    cum ar fi salvarea produselor favorite sau păstrarea datelor de comandă (informații de contact, adresă de livrare, 
+    metode de plată), sunt disponibile exclusiv pentru utilizatorii autentificați. 
+    Dupa ce comanda este platita, utilizatorul va primi factura pe e-mail,
+    loc în care se vor trimite și promoții sau reduceri atractive.
+  </h3>
+  <img src="{% static 'magazin_app/imagini/imagine.webp' %}" style="display: block; margin-left: auto; margin-right: auto; margin-top:50px; height : 400px">
+{% endblock %}
+

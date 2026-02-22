@@ -1,0 +1,23 @@
+{% extends "magazin_app/baza.html" %}
+
+{% block title %}Autentificare{% endblock %}
+
+{% block content %}
+  <section class="formular">
+    <h2>Autentificare</h2>
+
+    {% if messages %}
+      {% for message in messages %}
+        <p style="color: red;">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn">Login</button>
+    </form>
+
+    <p>Nu ai cont? <a href="{% url 'register' %}">Înregistrează-te aici</a></p>
+  </section>
+{% endblock %}

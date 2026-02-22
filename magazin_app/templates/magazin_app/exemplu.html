@@ -1,0 +1,15 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ro">
+    <head>
+        <title>{{titlu_tab}}</title>
+        <link rel="stylesheet" href="{% static 'magazin_app/css/stil.css' %}" type="text/css" />
+    </head>
+    <body>
+        <h1>{{titlu_articol}}</h1>
+        <p>{{continut_articol}}</p>
+        {# Comentariu in HTML #}
+        <a href = "{%url 'info' %}?a=10&b=20&a=30">Informatii</a>
+        <img src="{% static 'magazin_app/imagini/imagine.webp' %}" alt="Imagine persoana">
+    </body>
+</html>

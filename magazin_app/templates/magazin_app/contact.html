@@ -1,0 +1,24 @@
+{% extends "magazin_app/baza.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Contact - Magazin Online{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'magazin_app/css/contact.css' %}" type="text/css">
+{% endblock %}
+
+{% block content %}
+
+
+
+<h2>Contact</h2>
+<form method="post" action="" class ="contact-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Trimite</button>
+</form>
+
+{% endblock %}

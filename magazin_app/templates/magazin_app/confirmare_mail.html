@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirma emailul</title>
+</head>
+<body style="font-family: Arial; padding:20px; background:#f4f4f4;">
+    <div style="background:white; padding:20px; border-radius:10px; max-width:600px; margin:auto;">
+        <h2>Bun venit, {{ user.username }}!</h2>
+
+        <p>Te rugam sa confirmi adresa ta de email accesand linkul de mai jos:</p>
+
+        <p>
+            <a href="{{ link_confirmare }}" 
+               style="background:#007bff; color:white; padding:10px 20px; text-decoration:none; border-radius:5px;">
+                Confirma emailul
+            </a>
+        </p>
+
+        <p>Daca nu merge butonul, copiaza linkul:</p>
+        <p>{{ link_confirmare }}</p>
+    </div>
+</body>
+</html>
