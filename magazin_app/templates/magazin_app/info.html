@@ -1,14 +1,29 @@
 {% extends "magazin_app/baza.html" %}
 
-{% block title %}Informatii despre server{% endblock %}
+{% block title %}Informații despre server{% endblock %}
+
 {% block content %}
-    <h1>Informatii despre server</h1>
-    {{ html_content|safe }}
-    <h2>Numar parametri: {{ nr_parametri }}</h2>
-    <h2>Parametrii:</h2>
-    <ul>
-        {% for key, value in parametrii %}
-            <li>{{ key }} = {{ value }}</li>
-        {% endfor %}
+<header class="pagina-cap">
+  <div>
+    <h1>Informații despre server</h1>
+    <p>Adaugă <code>?data=zi</code> sau <code>?data=timp</code> la adresă pentru doar o parte din dată.</p>
+  </div>
+</header>
+
+<div class="admin-bloc">
+  {{ html_content|safe }}
+</div>
+
+<div class="admin-bloc">
+  <h2>Parametri primiți: {{ nr_parametri }}</h2>
+  {% if parametrii %}
+    <ul class="chei">
+      {% for key, value in parametrii %}
+        <li><strong>{{ key }}</strong> = {{ value }}</li>
+      {% empty %}
+        <li>Niciun parametru</li>
+      {% endfor %}
     </ul>
+  {% endif %}
+</div>
 {% endblock %}

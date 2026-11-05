@@ -1,0 +1,264 @@
+/* ==========================================================================
+   Home page
+   ========================================================================== */
+
+.continut {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* --------------------------------------------------------------------------
+   Hero: grape field, photo blended in (its black background disappears
+   into the grape via mix-blend-mode: lighten), and a real label printed
+   on the blank tub the athlete is pointing at.
+   -------------------------------------------------------------------------- */
+
+.hero {
+  background: var(--grape);
+  color: var(--paper);
+  overflow: hidden;
+}
+
+.hero-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.hero-text { padding: 56px 0 64px; position: relative; z-index: 1; }
+
+.hero h1 {
+  font-size: clamp(3.2rem, 7.4vw, 6.6rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  max-width: 11ch;
+  color: var(--paper);
+}
+
+.hero-sub {
+  margin: 24px 0 30px;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  max-width: 46ch;
+  color: var(--on-grape);
+}
+
+.hero-actiuni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* The photo has wide black margins; scale it past its column so the athlete
+   reads larger. The black parts blend away, so the overlap is invisible. */
+.hero-foto {
+  position: relative;
+  align-self: end;
+  container-type: inline-size;
+  aspect-ratio: 1000 / 833;
+  width: 128%;
+  margin-left: -22%;
+  pointer-events: none;
+}
+.hero-foto img {
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: lighten;
+}
+
+/* Label overlaid on the blank tub (positions measured on the 1000×833 photo) */
+.tub-eticheta {
+  position: absolute;
+  left: 34%;
+  top: 74.6%;
+  width: 14.4%;
+  height: 14.6%;
+  background: var(--paper);
+  border-radius: 0.4cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--ink);
+  overflow: hidden;
+  padding-bottom: 1.6cqw;
+}
+.tub-brand {
+  font-family: var(--f-body);
+  font-weight: 700;
+  font-size: 1.05cqw;
+  color: var(--grape);
+  line-height: 1.1;
+}
+.tub-produs {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 2.9cqw;
+  line-height: 0.95;
+  margin: 0.3cqw 0 0.2cqw;
+}
+.tub-gramaj {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.3cqw;
+  line-height: 1;
+  padding: 0.15cqw 0.6cqw;
+  border-radius: 1cqw;
+  background: var(--melon);
+}
+.tub-dunga {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1cqw;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+.tub-dunga i:nth-child(1) { background: var(--f-lamaie); }
+.tub-dunga i:nth-child(2) { background: var(--f-portocala); }
+.tub-dunga i:nth-child(3) { background: var(--f-cirese); }
+.tub-dunga i:nth-child(4) { background: var(--f-strugure); }
+.tub-dunga i:nth-child(5) { background: var(--f-zmeura); }
+.tub-dunga i:nth-child(6) { background: var(--f-biscuit); }
+
+.hero > .dunga-arome { height: 10px; }
+
+/* --------------------------------------------------------------------------
+   Sections
+   -------------------------------------------------------------------------- */
+
+.sectiune { padding-top: 64px; }
+
+.sectiune-cap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding-bottom: 14px;
+  margin-bottom: 24px;
+  border-bottom: var(--rule-l) solid var(--ink);
+}
+.sectiune-cap h2 { font-size: clamp(2.2rem, 4.5vw, 3.2rem); }
+.sectiune-cap a { font-weight: 600; }
+
+/* --------------------------------------------------------------------------
+   Flavor wall: one big tile per category
+   -------------------------------------------------------------------------- */
+
+.perete-arome {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.aroma-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 190px;
+  padding: 20px 22px;
+  background: var(--cat);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-l);
+  color: var(--ink);
+  text-decoration: none;
+  overflow: hidden;
+}
+.aroma-tile:hover { color: var(--ink); }
+.aroma-tile:hover .aroma-nume { text-decoration: underline; text-decoration-thickness: 3px; }
+
+.aroma-tile > i {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  font-size: 4.4rem;
+  opacity: 0.85;
+}
+
+.aroma-nume {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
+  line-height: 1;
+}
+.aroma-nr {
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   Steps — a real sequence, so numbered
+   -------------------------------------------------------------------------- */
+
+.pasi {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-l);
+  background: var(--paper);
+  overflow: hidden;
+}
+.pasi li {
+  padding: 22px 24px 26px;
+  border-right: 2px solid var(--ink);
+}
+.pasi li:last-child { border-right: 0; }
+.pas-nr {
+  display: block;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 4.2rem;
+  line-height: 0.85;
+  color: var(--grape-hi);
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: var(--rule-xl) solid var(--ink);
+}
+.pasi h3 { margin-bottom: 8px; }
+.pasi p { color: var(--muted); margin: 0; }
+
+.cont-banda {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-top: 20px;
+  padding: 20px 24px;
+  background: var(--grape);
+  color: var(--paper);
+  border-radius: var(--r-l);
+}
+.cont-banda p { margin: 0; font-size: 1.15rem; font-weight: 500; }
+
+.oferta-sticker[hidden] { display: none; }
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 0; }
+  .hero-text { padding: 40px 0 8px; }
+  .hero-foto { max-width: 640px; width: 118%; margin: 0 0 0 -9%; }
+  .perete-arome { grid-template-columns: repeat(2, 1fr); }
+  .pasi { grid-template-columns: 1fr; }
+  .pasi li { border-right: 0; border-bottom: 2px solid var(--ink); }
+  .pasi li:last-child { border-bottom: 0; }
+}
+
+@media (max-width: 520px) {
+  .perete-arome { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .aroma-tile { min-height: 140px; padding: 14px; }
+  .aroma-tile > i { font-size: 2.6rem; top: 14px; right: 14px; }
+  .aroma-nume { font-size: 1.7rem; }
+}

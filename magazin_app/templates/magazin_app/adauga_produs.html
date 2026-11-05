@@ -1,14 +1,37 @@
 {% extends "magazin_app/baza.html" %}
 
+{% block title %}Adaugă produs{% endblock %}
+
 {% block content %}
-<h2>Adaugă produs</h2>
+<div class="mediu">
+  <section class="eticheta" aria-labelledby="adauga-titlu" style="padding:22px 26px 26px">
+    <h1 class="eticheta-titlu" id="adauga-titlu">Adaugă produs</h1>
+    <p class="eticheta-sub" style="margin-bottom:22px"><span>Prețul de vânzare se calculează din prețul de cumpărare și marjă.</span></p>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
+    <form method="post" novalidate>
+      {% csrf_token %}
 
-    <button type="submit">Salvează</button>
-</form>
+      {% if form.non_field_errors %}
+        <ul class="errorlist nonfield">
+          {% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}
+        </ul>
+      {% endif %}
 
+      <div class="form-grid">
+        {% for field in form %}
+          {% if field.name == "name" or field.name == "is_active" %}
+            {% include "magazin_app/_camp.html" with field=field clasa="intreg" %}
+          {% else %}
+            {% include "magazin_app/_camp.html" with field=field %}
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="form-actiuni">
+        <button type="submit">Salvează produsul</button>
+        <a href="{% url 'produse' %}" class="btn-secundar">Anulează</a>
+      </div>
+    </form>
+  </section>
+</div>
 {% endblock %}
-

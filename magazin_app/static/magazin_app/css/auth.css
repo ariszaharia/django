@@ -1,0 +1,104 @@
+/* ==========================================================================
+   Login / register — form label next to a "negative" label of account perks
+   ========================================================================== */
+
+.auth {
+  display: grid;
+  grid-template-columns: minmax(0, 460px) minmax(0, 360px);
+  justify-content: center;
+  align-items: start;
+  gap: 32px;
+}
+.auth.lat { grid-template-columns: minmax(0, 720px) minmax(0, 340px); }
+
+.auth-form { padding: 22px 26px 26px; }
+
+.auth-form .eticheta-titlu { font-size: clamp(2.4rem, 5vw, 3.2rem); }
+
+.auth-form .eticheta-sub {
+  font-weight: 500;
+  margin-bottom: 22px;
+}
+.auth-form .eticheta-sub a { font-weight: 700; }
+
+.auth-grup {
+  border: 0;
+  padding: 0;
+  margin: 0 0 8px;
+}
+.auth-grup legend {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  padding: 0 0 6px;
+  margin-bottom: 16px;
+  width: 100%;
+  border-bottom: var(--rule-s) solid var(--ink);
+}
+
+.auth-campuri {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 18px;
+}
+.auth-campuri .intreg { grid-column: 1 / -1; }
+
+.parola-camp { position: relative; }
+.parola-camp input { padding-right: 84px; }
+.arata-parola {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--r-s);
+  background: var(--lilac);
+  color: var(--ink);
+  font: 600 0.88rem var(--f-body);
+  cursor: pointer;
+}
+.arata-parola:hover { background: #E4DEF3; }
+
+.auth-trimite {
+  margin-top: 8px;
+  padding-top: 18px;
+  border-top: var(--rule-l) solid var(--ink);
+}
+
+/* Perks panel: the label printed in negative */
+.auth-beneficii {
+  background: var(--grape);
+  color: var(--on-grape);
+  border-radius: var(--r-l);
+  padding: 22px 24px 24px;
+}
+.auth-beneficii h2 {
+  color: var(--paper);
+  font-size: 2rem;
+  padding-bottom: 8px;
+  border-bottom: var(--rule-xl) solid var(--paper);
+}
+.auth-beneficii ul { list-style: none; }
+.auth-beneficii li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  line-height: 1.4;
+}
+.auth-beneficii li:last-child { border-bottom: var(--rule-l) solid var(--paper); }
+.auth-beneficii li i { color: var(--lemon); margin-top: 3px; font-size: 1.05rem; }
+.auth-beneficii li strong { display: block; color: var(--paper); font-weight: 600; }
+.auth-beneficii .nota { margin: 14px 0 0; font-size: 0.92rem; color: #B7AEDA; }
+
+@media (max-width: 900px) {
+  .auth, .auth.lat { grid-template-columns: minmax(0, 560px); }
+  .auth-beneficii { order: 2; }
+}
+
+@media (max-width: 560px) {
+  .auth-campuri { grid-template-columns: 1fr; }
+  .auth-form { padding: 18px 16px 20px; }
+}

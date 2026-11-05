@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from datetime import datetime, timedelta
 from django.shortcuts import render
 from .middleware import LOG_ACCESARI
-from .models import Produs, Categorie, User, Vizualizare, Comanda
+from .models import Produs, Categorie, User, Vizualizare, Comanda, Locatie
 from django.core.paginator import Paginator
 from .forms import ContactForm, FiltruProduseForm, UserLoginForm, UserRegisterForm, ProdusForm, UpdateProfileForm
 from .promotii import PromotieNouaForm
@@ -17,8 +17,8 @@ from collections import Counter
 from django.core.mail import send_mail, mail_admins, send_mass_mail
 from django.template.loader import render_to_string
 from django.conf import settings
-from django.db.models import Count
-from django.contrib.auth import authenticate, login, logout
+from django.db.models import Count, Min
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.db.models import Case, When, Value, IntegerField
 from django.http import JsonResponse
 from django.core.mail import EmailMessage
@@ -32,9 +32,20 @@ from django.core.cache import cache
 
 def index(request):
     categorii = Categorie.objects.all()
+    categorii_numarate = Categorie.objects.annotate(nr_produse=Count("produse")).order_by("name")
+    noutati = (
+        Produs.objects.select_related("categorie")
+        .filter(stock_quantity__gt=0)
+        .order_by("-produs_id")[:4]
+    )
+    statistici = Produs.objects.aggregate(nr_produse=Count("produs_id"), pret_min=Min("price"))
+
     return render(request, 'magazin_app/home.html', {
         "ip": get_ip(request),
-        "categorii_meniu" : categorii
+        "categorii_meniu" : categorii,
+        "categorii_numarate": categorii_numarate,
+        "noutati": noutati,
+        "statistici": statistici,
     })
 
 def info(request):
@@ -49,9 +60,9 @@ def info(request):
 
     user = User.objects.get(id=request.session["user_id"])
 
-    grup = Group.objects.get(name="Administratori_site")
+    este_admin_site = user.groups.filter(name="Administratori_site").exists()
 
-    if grup not in user.groups.all():
+    if not este_admin_site:
         html = render_to_string("magazin_app/403.html", {
             "titlu": "Eroare vizualizare pagina",
             "mesaj_personalizat": "Nu ai voie vizualizezi pagina.",
@@ -129,9 +140,9 @@ def log(request):
         return HttpResponseForbidden(html)
 
     user = User.objects.get(id=request.session["user_id"])
-    grup = Group.objects.get(name="Administratori_site")
+    este_admin_site = user.groups.filter(name="Administratori_site").exists()
 
-    if grup not in user.groups.all():
+    if not este_admin_site:
         html = render_to_string("magazin_app/403.html",{
             "titlu": "Eroare vizualizare log",
             "mesaj_personalizat": "Nu ai voie vizualizezi log-ul.",
@@ -271,10 +282,12 @@ def contact(request):
                 "formular" : data
             }
             cale_completa = os.path.join(folder_path, nume_fisier)
-            with open(cale_completa, 'w') as f:
+            os.makedirs(folder_path, exist_ok=True)
+            with open(cale_completa, 'w', encoding='utf-8') as f:
                 json.dump(continut_fisier, f, ensure_ascii=False, indent=4, default=str)
 
-            return redirect('mesaj_trimis')
+            messages.success(request, "Mesajul a fost trimis. Îți răspundem pe email.")
+            return redirect('contact')
     else:
         form = ContactForm()
     
@@ -296,12 +309,20 @@ def cos(request):
         "categorii_meniu" : categorii
     })
 
+def _filtre_querystring(request):
+    """Current GET params minus pagination, so page links keep the active filters."""
+    params = request.GET.copy()
+    for cheie in ("page", "salt"):
+        params.pop(cheie, None)
+    return params.urlencode()
+
+
 def produse(request):
     sortare = request.GET.get("sort", "none")
     user_id = request.user.id if request.user.is_authenticated else "anonim"
-    cache_key = f"produse_pagina_{user_id}" 
+    cache_key = f"produse_pagina_{user_id}"
 
-    produse = Produs.objects.annotate(
+    produse = Produs.objects.select_related("categorie").annotate(
         available = Case(
             When(stock_quantity__gt=0, then=Value(1)),
             default=Value(0),
@@ -311,30 +332,30 @@ def produse(request):
 
     form = FiltruProduseForm(request.GET or None)
     categorii = Categorie.objects.all()
+    produse_pe_pagina = None
     if form.is_valid():
         nume = form.cleaned_data.get("nume")
         pret_min = form.cleaned_data.get("pret_min")
         pret_max = form.cleaned_data.get("pret_max")
         categorie = form.cleaned_data.get("categorie")
-        data_adaugare = form.cleaned_data.get("data_adaugare")
-        produse_pe_pagina = form.cleaned_data.get("produse_pe_pagina") or 10
-        cache.set(cache_key, produse_pe_pagina, 86400)
+        produse_pe_pagina = form.cleaned_data.get("produse_pe_pagina")
+        if produse_pe_pagina:
+            cache.set(cache_key, produse_pe_pagina, 86400)
 
         if nume:
-            produse = produse.filter(name=nume)
+            produse = produse.filter(name__icontains=nume)
         if pret_min is not None:
             produse = produse.filter(price__gte=pret_min)
         if pret_max is not None:
             produse = produse.filter(price__lte=pret_max)
         if categorie:
             produse = produse.filter(categorie=categorie)
-        if data_adaugare:
-            produse = produse.filter(data_adaugare__date=data_adaugare)
-    else:
+
+    if not produse_pe_pagina:
         produse_pe_pagina = cache.get(cache_key, 10)
 
     if sortare == "a":
-        produse = produse.order_by("-price", "price")
+        produse = produse.order_by("-available", "price")
     elif sortare == "d":
         produse = produse.order_by("-available", "-price")
     else:
@@ -370,7 +391,9 @@ def produse(request):
         "sortare": sortare,
         "ip": get_ip(request),
         "categorii_meniu" : categorii,
-        "salt_3" : salt_3
+        "salt_3" : salt_3,
+        "filtre_qs": _filtre_querystring(request),
+        "pagini": paginator.get_elided_page_range(page_obj.number, on_each_side=1, on_ends=1),
     })
 
 
@@ -411,7 +434,7 @@ def categorie_detalii(request, nume_categorie):
             "ip": get_ip(request),
         })
 
-    produse_categorie = Produs.objects.filter(categorie=categorie)
+    produse_categorie = Produs.objects.filter(categorie=categorie).select_related("categorie")
     form = FiltruProduseForm(request.GET or None, initial={"categorie": categorie.categorie_id})
 
     form.fields["categorie"].initial = categorie.categorie_id
@@ -439,16 +462,15 @@ def categorie_detalii(request, nume_categorie):
         if filtre.get("pret_max") is not None:
             produse_categorie = produse_categorie.filter(price__lte=filtre["pret_max"])
 
-        if filtre.get("data_adaugare"):
-            produse_categorie = produse_categorie.filter(data_adaugare__date=filtre["data_adaugare"])
-
     sortare = request.GET.get("sort", "none")
     if sortare == "a":
         produse_categorie = produse_categorie.order_by("price")
     elif sortare == "d":
         produse_categorie = produse_categorie.order_by("-price")
+    else:
+        produse_categorie = produse_categorie.order_by("name")
 
-    produse_pe_pagina = form.cleaned_data.get("produse_pe_pagina", 5) if form.is_valid() else 10
+    produse_pe_pagina = (form.cleaned_data.get("produse_pe_pagina") if form.is_valid() else None) or 10
     paginator = Paginator(produse_categorie, produse_pe_pagina)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -461,12 +483,23 @@ def categorie_detalii(request, nume_categorie):
         "categorie": categorie,
         "sortare": sortare,
         "ip": get_ip(request),
-        "categorii_meniu": categorii
+        "categorii_meniu": categorii,
+        "filtre_qs": _filtre_querystring(request),
+        "pagini": paginator.get_elided_page_range(page_obj.number, on_each_side=1, on_ends=1),
     })
     
 def categorie(request):
+    categorii = Categorie.objects.annotate(nr_produse=Count("produse")).order_by("name")
     return render(request, "magazin_app/categorii.html",{
-        "ip" : get_ip(request) 
+        "ip" : get_ip(request),
+        "categorii": categorii,
+    })
+
+
+def locatii(request):
+    return render(request, "magazin_app/locatii.html", {
+        "ip": get_ip(request),
+        "locatii": Locatie.objects.order_by("oras"),
     })
 
 
@@ -658,13 +691,17 @@ def change_password_view(request):
         new_pass = request.POST.get('new_pass')
         confirm = request.POST.get('confirm')
 
-        if user.parola != old_pass:
+        if not user.check_password(old_pass or ""):
             messages.error(request, "Parola veche nu este corecta.")
+        elif not new_pass:
+            messages.error(request, "Introdu o parolă nouă.")
         elif new_pass != confirm:
             messages.error(request, "Parolele noi nu coincid.")
         else:
-            user.parola = new_pass
+            user.set_password(new_pass)
             user.save()
+            # keep the user logged in after the password hash changes
+            update_session_auth_hash(request, user)
             messages.success(request, "Parola a fost schimbata cu succes!")
             return redirect('profile')
 
@@ -922,6 +959,8 @@ def finalizeaza_comanda(request):
         return JsonResponse({"success": False, "error": "Eroare interna server."})
              
 def actualizeaza_date(request):
+    if not request.session.get('user_id'):
+        return redirect('login')
     user = User.objects.get(id=request.session.get('user_id'))
     if request.method == "POST":
         form = UpdateProfileForm(request.POST, instance=user)
@@ -950,6 +989,6 @@ def actualizeaza_date(request):
             for item in lipsa:
                 lista_html += f"<li>{item}</li>"
             lista_html += "</ul>"
-            messages.error(request, lista_html, extra_tags='danger')
+            messages.error(request, lista_html, extra_tags='danger html')
 
     return render(request, 'magazin_app/actualizeaza_date.html', {'form': form})

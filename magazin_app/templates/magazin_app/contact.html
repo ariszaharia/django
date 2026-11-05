@@ -1,24 +1,62 @@
 {% extends "magazin_app/baza.html" %}
-{% load static %}
 
-
-
-
-{% block title %}Contact - Magazin Online{% endblock %}
-
-{% block extra_head %}
-<link rel="stylesheet" href="{% static 'magazin_app/css/contact.css' %}" type="text/css">
-{% endblock %}
+{% block title %}Contact{% endblock %}
 
 {% block content %}
+<header class="pagina-cap">
+  <div>
+    <h1>Contact</h1>
+    <p>Întrebări despre produse, comenzi sau programări. Completează formularul și revenim pe email.</p>
+  </div>
+</header>
 
+<div class="form-layout">
+  <section class="eticheta" aria-label="Formular de contact">
+    <form method="post" novalidate>
+      {% csrf_token %}
 
+      {% if form.non_field_errors %}
+        <ul class="errorlist nonfield">
+          {% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}
+        </ul>
+      {% endif %}
 
-<h2>Contact</h2>
-<form method="post" action="" class ="contact-form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Trimite</button>
-</form>
+      <fieldset class="form-sectiune">
+        <legend>Despre tine</legend>
+        <div class="form-grid">
+          {% include "magazin_app/_camp.html" with field=form.nume %}
+          {% include "magazin_app/_camp.html" with field=form.prenume %}
+          {% include "magazin_app/_camp.html" with field=form.cnp %}
+          {% include "magazin_app/_camp.html" with field=form.data_nasterii %}
+          {% include "magazin_app/_camp.html" with field=form.email %}
+          {% include "magazin_app/_camp.html" with field=form.confirmare_email %}
+        </div>
+      </fieldset>
 
+      <fieldset class="form-sectiune">
+        <legend>Mesajul tău</legend>
+        <div class="form-grid">
+          {% include "magazin_app/_camp.html" with field=form.tip_mesaj %}
+          {% include "magazin_app/_camp.html" with field=form.minim_zile_asteptare %}
+          {% include "magazin_app/_camp.html" with field=form.subiect clasa="intreg" %}
+          {% include "magazin_app/_camp.html" with field=form.mesaj clasa="intreg" %}
+        </div>
+      </fieldset>
+
+      <div class="form-actiuni">
+        <button type="submit">Trimite mesajul</button>
+      </div>
+    </form>
+  </section>
+
+  <aside class="panou-grape" aria-labelledby="raspuns-titlu">
+    <h2 id="raspuns-titlu">Cât așteptați</h2>
+    <dl>
+      <div><dt>Întrebări, reclamații</dt><dd>minim 2 zile</dd></div>
+      <div><dt>Review-uri, cereri</dt><dd>minim 4 zile</dd></div>
+      <div><dt>Maxim</dt><dd>30 de zile</dd></div>
+    </dl>
+    <p>Semnează mesajul cu numele tău la final. Subiectul începe cu literă mare și nu conține linkuri.</p>
+  </aside>
+</div>
 {% endblock %}

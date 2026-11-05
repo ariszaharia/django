@@ -1,34 +1,51 @@
 {% extends 'magazin_app/baza.html' %}
-{% block title %}Jurnal accesari{% endblock %}
+
+{% block title %}Jurnal accesări{% endblock %}
 
 {% block content %}
-<h1>Jurnal accesari</h1>
-
-{% for m in mesaje %}
-  <p>{{ m|safe }}</p>
-{% empty %}
-  <p>Nu există accesări înregistrate.</p>
-{% endfor %}
-
-{% if tabel %}
-  <table border = "2">
-    <tr>
-      {% for col in coloane %}
-        <th>{{ col }}</th>
-      {% endfor %}
-    </tr>
-    {% for rand in tabel %}
-      <tr>
-        {% for celula in rand %}
-          <td>{{ celula }}</td>
-        {% endfor %}
-      </tr>
-    {% endfor %}
-  </table>
-{% endif %}
+<header class="pagina-cap">
+  <div>
+    <h1>Jurnal accesări</h1>
+    <p>Parametri: <code>ultimele</code>, <code>accesari</code>, <code>iduri</code>, <code>dubluri</code>, <code>tabel</code>.</p>
+  </div>
+</header>
 
 {% if rezumat %}
-  <h2>Cea mai accesată pagină: {{ rezumat.cea_mai_frecventa }} ({{ rezumat.nr_max }} accesări)</h2>
-  <h2>Cea mai puțin accesată pagină: {{ rezumat.cea_mai_putin_frecventa }} ({{ rezumat.nr_min }} accesări)</h2>
+  <dl class="cifre">
+    <div>
+      <dt>Cea mai accesată pagină</dt>
+      <dd>{{ rezumat.cea_mai_frecventa }} <small>{{ rezumat.nr_max }} accesări</small></dd>
+    </div>
+    <div>
+      <dt>Cea mai puțin accesată pagină</dt>
+      <dd>{{ rezumat.cea_mai_putin_frecventa }} <small>{{ rezumat.nr_min }} accesări</small></dd>
+    </div>
+  </dl>
 {% endif %}
+
+{% if tabel %}
+  <div class="tabel-wrap" style="margin-bottom:20px">
+    <table class="tabel">
+      <thead>
+        <tr>{% for col in coloane %}<th>{{ col }}</th>{% endfor %}</tr>
+      </thead>
+      <tbody>
+        {% for rand in tabel %}
+          <tr>{% for celula in rand %}<td>{{ celula }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+<div class="admin-bloc">
+  <h2>Accesări</h2>
+  <ul class="jurnal">
+    {% for m in mesaje %}
+      <li>{{ m|safe }}</li>
+    {% empty %}
+      <li>Nu există accesări înregistrate.</li>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock %}

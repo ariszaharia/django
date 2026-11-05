@@ -1,0 +1,18 @@
+{% extends "magazin_app/baza.html" %}
+
+{% block title %}Oferta ta{% endblock %}
+
+{% block content %}
+<section class="oferta" aria-labelledby="oferta-titlu">
+  <div class="oferta-disc" aria-hidden="true">−50%</div>
+  <div>
+    <h1 id="oferta-titlu">Ai deblocat oferta</h1>
+    <p>Oferta de 50% e activă pentru tine în această sesiune.</p>
+    <p>Dacă ieși din cont, oferta dispare.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px" class="pe-grape">
+      <a class="btn" href="{% url 'produse' %}">Alege produsele</a>
+      <a class="btn-secundar" href="{% url 'cos' %}">Vezi coșul</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

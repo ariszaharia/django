@@ -1,23 +1,42 @@
 {% extends "magazin_app/baza.html" %}
+{% load static %}
 
-{% block title %}Autentificare{% endblock %}
+{% block title %}Intră în cont{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'magazin_app/css/auth.css' %}?v={{ static_v }}">
+{% endblock %}
 
 {% block content %}
-  <section class="formular">
-    <h2>Autentificare</h2>
+<div class="auth">
+  <section class="auth-form eticheta" aria-labelledby="login-titlu">
+    <h1 class="eticheta-titlu" id="login-titlu">Intră în cont</h1>
+    <p class="eticheta-sub">
+      <span>Nu ai cont încă?</span>
+      <a href="{% url 'register' %}">Creează unul</a>
+    </p>
 
-    {% if messages %}
-      {% for message in messages %}
-        <p style="color: red;">{{ message }}</p>
-      {% endfor %}
-    {% endif %}
-
-    <form method="POST">
+    <form method="post" novalidate>
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn">Login</button>
-    </form>
 
-    <p>Nu ai cont? <a href="{% url 'register' %}">Înregistrează-te aici</a></p>
+      {% if form.non_field_errors %}
+        <ul class="errorlist nonfield">
+          {% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+
+      {% include "magazin_app/_camp.html" with field=form.username %}
+      {% include "magazin_app/_camp.html" with field=form.password parola=True %}
+      {% include "magazin_app/_camp.html" with field=form.remember_me %}
+
+      <div class="auth-trimite">
+        <button type="submit" class="btn-lat">Intră în cont</button>
+      </div>
+    </form>
   </section>
+
+  {% include "magazin_app/_beneficii_cont.html" %}
+</div>
+
+{% include "magazin_app/_parola_js.html" %}
 {% endblock %}

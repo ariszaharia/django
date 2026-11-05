@@ -1,0 +1,29 @@
+{% comment %}
+  One form field: label, widget, help text, errors.
+  Usage: {% include "magazin_app/_camp.html" with field=form.email %}
+  Optional: clasa="intreg" (extra wrapper class), parola=True (show/hide button)
+{% endcomment %}
+{% if field.is_hidden or field.field.widget.attrs.hidden %}
+  {{ field }}
+{% elif field.field.widget.input_type == "checkbox" and field.field.widget.allow_multiple_selected %}
+  <fieldset class="camp camp-multi {{ clasa }}{% if field.errors %} are-eroare{% endif %}" style="border:0">
+    <legend style="font-weight:600;font-size:.95rem;margin-bottom:8px">{{ field.label }}</legend>
+    {{ field.errors }}
+    {{ field }}
+    {% if field.help_text %}<span class="ajutor">{{ field.help_text|safe }}</span>{% endif %}
+  </fieldset>
+{% elif field.field.widget.input_type == "checkbox" %}
+  <div class="camp camp-bifa {{ clasa }}{% if field.errors %} are-eroare{% endif %}">
+    {{ field.errors }}
+    <label for="{{ field.id_for_label }}">{{ field }} {{ field.label }}</label>
+    {% if field.help_text %}<span class="ajutor">{{ field.help_text|safe }}</span>{% endif %}
+  </div>
+{% else %}
+  <div class="camp {{ clasa }}{% if parola %} parola-camp{% endif %}{% if field.errors %} are-eroare{% endif %}">
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field.errors }}
+    {{ field }}
+    {% if parola %}<button type="button" class="arata-parola" data-tinta="{{ field.id_for_label }}" aria-pressed="false">Arată</button>{% endif %}
+    {% if field.help_text %}<span class="ajutor" id="{{ field.auto_id }}_helptext">{{ field.help_text|safe }}</span>{% endif %}
+  </div>
+{% endif %}

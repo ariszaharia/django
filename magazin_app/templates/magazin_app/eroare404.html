@@ -1,10 +1,20 @@
 {% extends "magazin_app/baza.html" %}
 
-{% block title %}Eroare 404{% endblock %}
+{% block title %}Pagina nu există{% endblock %}
 
 {% block content %}
-
-<h1>Eroare 404 - Pagina nu exista</h1>
-<p>Ne pare rău, dar pagina pe care o căutați nu exista.</p>
-<p>Vă rugăm să verificați adresa URL sau să reveniți la <a href="{% url 'index' %}">pagina principală</a>.</p>
+<div class="stare eroare">
+  <div class="stare-cap">
+    <span class="stare-cod">404</span>
+  </div>
+  <div class="stare-corp">
+    <h1 style="margin-bottom:12px">Pagina nu există</h1>
+    <p class="lead">{{ mesaj|default:"Adresa pe care ai deschis-o nu duce nicăieri." }}</p>
+    <p>Verifică adresa sau pornește din magazin.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn" href="{% url 'produse' %}">Vezi produsele</a>
+      <a class="btn-secundar" href="{% url 'index' %}">Pagina principală</a>
+    </div>
+  </div>
+</div>
 {% endblock %}

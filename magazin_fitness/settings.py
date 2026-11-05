@@ -73,6 +73,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'magazin_app.context_processors.categorii_meniu',
+                'magazin_app.context_processors.versiune_static',
             ],
         },
     },

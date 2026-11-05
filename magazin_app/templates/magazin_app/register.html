@@ -1,23 +1,60 @@
 {% extends "magazin_app/baza.html" %}
+{% load static %}
 
-{% block title %}Înregistrare{% endblock %}
+{% block title %}Creează cont{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'magazin_app/css/auth.css' %}?v={{ static_v }}">
+{% endblock %}
 
 {% block content %}
-  <section class="formular">
-    <h2>Înregistrare utilizator</h2>
+<div class="auth lat">
+  <section class="auth-form eticheta" aria-labelledby="register-titlu">
+    <h1 class="eticheta-titlu" id="register-titlu">Creează cont</h1>
+    <p class="eticheta-sub">
+      <span>Ai deja cont?</span>
+      <a href="{% url 'login' %}">Intră în cont</a>
+    </p>
 
-    {% if messages %}
-      {% for message in messages %}
-        <p style="color: green;">{{ message }}</p>
-      {% endfor %}
-    {% endif %}
-
-    <form method="POST">
+    <form method="post" novalidate>
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn">Creează cont</button>
-    </form>
 
-    <p>Ai deja cont? <a href="{% url 'login' %}">Autentifică-te</a></p>
+      {% if form.non_field_errors %}
+        <ul class="errorlist nonfield">
+          {% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+
+      <fieldset class="auth-grup">
+        <legend>Date de cont</legend>
+        <div class="auth-campuri">
+          {% include "magazin_app/_camp.html" with field=form.username clasa="intreg" %}
+          {% include "magazin_app/_camp.html" with field=form.email clasa="intreg" %}
+          {% include "magazin_app/_camp.html" with field=form.password1 parola=True %}
+          {% include "magazin_app/_camp.html" with field=form.password2 parola=True %}
+        </div>
+      </fieldset>
+
+      <fieldset class="auth-grup">
+        <legend>Livrare și contact</legend>
+        <div class="auth-campuri">
+          {% include "magazin_app/_camp.html" with field=form.nr_tel %}
+          {% include "magazin_app/_camp.html" with field=form.data_nasterii %}
+          {% include "magazin_app/_camp.html" with field=form.adresa clasa="intreg" %}
+          {% include "magazin_app/_camp.html" with field=form.tara %}
+          {% include "magazin_app/_camp.html" with field=form.vip clasa="intreg" %}
+        </div>
+      </fieldset>
+
+      <div class="auth-trimite">
+        <button type="submit" class="btn-lat">Creează cont</button>
+        <p class="ajutor">Îți trimitem un email de confirmare. Contul se activează după ce apeși linkul din el.</p>
+      </div>
+    </form>
   </section>
+
+  {% include "magazin_app/_beneficii_cont.html" %}
+</div>
+
+{% include "magazin_app/_parola_js.html" %}
 {% endblock %}

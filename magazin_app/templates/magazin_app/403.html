@@ -1,33 +1,40 @@
 {% extends "magazin_app/baza.html" %}
 
+{% block title %}Acces interzis{% endblock %}
+
 {% block content %}
+<div class="stare eroare">
+  <div class="stare-cap">
+    <span class="stare-cod">403</span>
+  </div>
+  <div class="stare-corp">
+    <p>
+      {% if utilizator %}
+        Salut, <strong>{{ utilizator.username|default:utilizator }}</strong>!
+      {% else %}
+        Salut, preastimate anonim!
+      {% endif %}
+    </p>
 
-<div style="padding: 20px;">
+    <h1 style="margin-bottom:12px">{% if titlu %}{{ titlu }}{% else %}Eroare 403{% endif %}</h1>
 
-    {% if utilizator %}
-        <p>Salut <strong>{{ utilizator.username }}</strong>!</p>
-    {% else %}
-        <p>Salut preastimate anonim!</p>
+    {% if mesaj_personalizat %}<p class="lead">{{ mesaj_personalizat }}</p>{% endif %}
+
+    {% if nr_403 %}
+      <p>Ai ajuns pe această pagină de <strong>{{ nr_403 }}</strong> ori în această sesiune.</p>
     {% endif %}
-
-    <h1>
-        {% if titlu %}
-            {{ titlu }}
-        {% else %}
-            Eroare 403
-        {% endif %}
-    </h1>
-
-    <p>{{ mesaj_personalizat }}</p>
-
-    <p>Ai ajuns pe această pagină de <strong>{{ nr_403 }}</strong> ori în această sesiune.</p>
 
     {% if nr_403 > limita %}
-        <p style="color: red; font-weight: bold;">
-            Atenție! Ai depășit limita de accesări 403. Ar putea indica o problemă de permisiuni!
-        </p>
+      <p class="alert error" style="margin:0 0 20px">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+        <span>Ai depășit limita de accesări 403. Ar putea indica o problemă de permisiuni.</span>
+      </p>
     {% endif %}
 
+    <div class="hero-actiuni" style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn" href="{% url 'index' %}">Pagina principală</a>
+      <a class="btn-secundar" href="{% url 'login' %}">Intră în cont</a>
+    </div>
+  </div>
 </div>
-
 {% endblock %}

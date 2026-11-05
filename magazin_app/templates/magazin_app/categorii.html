@@ -1,1 +1,32 @@
 {% extends "magazin_app/baza.html" %}
+{% load static %}
+
+{% block title %}Categorii{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'magazin_app/css/home.css' %}?v={{ static_v }}">
+{% endblock %}
+
+{% block content %}
+<header class="pagina-cap">
+  <div>
+    <h1>Categorii</h1>
+    <p>Fiecare categorie are culoarea ei, aceeași pe care o vezi pe produse.</p>
+  </div>
+</header>
+
+<ul class="perete-arome">
+  {% for cat in categorii %}
+    <li>
+      <a class="aroma-tile" href="{% url 'categorie_detalii' cat.name|lower %}"
+         data-aroma="{{ cat.culoare|default:'' }}" style="--cat-raw: {{ cat.culoare|default:'#CBBFAF' }};">
+        <i class="{{ cat.icon|default:'fa-solid fa-tag' }}" aria-hidden="true"></i>
+        <span class="aroma-nume">{{ cat.name }}</span>
+        <span class="aroma-nr">{{ cat.nr_produse }} produs{{ cat.nr_produse|pluralize:"e" }}</span>
+      </a>
+    </li>
+  {% empty %}
+    <li class="gol">Nu există categorii încă.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

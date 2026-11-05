@@ -254,16 +254,35 @@ class ContactForm(forms.Form):
 #Filtru produse
 
 class FiltruProduseForm(forms.Form):
-    nume = forms.CharField(required=False, label="Nume produs")
-    pret_min = forms.DecimalField(required=False, min_value=0, label="Pret minim")
-    pret_max = forms.DecimalField(required=False, min_value=0, label="Pret maxim")
+    SORT_CHOICES = [
+        ("none", "Disponibile primele"),
+        ("a", "Preț crescător"),
+        ("d", "Preț descrescător"),
+    ]
+
+    nume = forms.CharField(
+        required=False, label="Nume produs",
+        widget=forms.TextInput(attrs={"placeholder": "ex. whey, creatină", "type": "search"}),
+    )
+    pret_min = forms.DecimalField(
+        required=False, min_value=0, label="Preț minim",
+        widget=forms.NumberInput(attrs={"placeholder": "0", "step": "any"}),
+    )
+    pret_max = forms.DecimalField(
+        required=False, min_value=0, label="Preț maxim",
+        widget=forms.NumberInput(attrs={"placeholder": "500", "step": "any"}),
+    )
     categorie = forms.ModelChoiceField(
         queryset=Categorie.objects.all(),
         required=False,
         label="Categorie",
         empty_label="Toate categoriile"
     )
-    produse_pe_pagina = forms.IntegerField(required=False, min_value=1, max_value=12, initial=10, label="Produse/pagina")
+    produse_pe_pagina = forms.IntegerField(
+        required=False, min_value=1, max_value=12, initial=10, label="Produse pe pagină",
+        widget=forms.NumberInput(attrs={"placeholder": "10"}),
+    )
+    sort = forms.ChoiceField(required=False, choices=SORT_CHOICES, label="Sortează după")
 
     def clean(self):
         cleaned_data = super().clean()
@@ -277,9 +296,15 @@ class FiltruProduseForm(forms.Form):
 
 ###LOGIN
 class UserLoginForm(AuthenticationForm):
-    username = forms.CharField(label="Username")
-    password = forms.CharField(widget=forms.PasswordInput(), label="Parola")
-    remember_me = forms.BooleanField(required=False, label="Tine minte timp de o zi")
+    username = forms.CharField(
+        label="Nume de utilizator",
+        widget=forms.TextInput(attrs={"autocomplete": "username", "autofocus": True}),
+    )
+    password = forms.CharField(
+        label="Parolă",
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+    )
+    remember_me = forms.BooleanField(required=False, label="Ține-mă minte o zi")
 
 #genereaza_cod
 def genereaza_cod(lungime=20):
@@ -289,8 +314,14 @@ def genereaza_cod(lungime=20):
 User = get_user_model()
 ###REGISTER
 class UserRegisterForm(forms.ModelForm):
-    password1 = forms.CharField(label="Parola", widget=forms.PasswordInput())
-    password2 = forms.CharField(label="Confirmă parola", widget=forms.PasswordInput())
+    password1 = forms.CharField(
+        label="Parolă",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+    )
+    password2 = forms.CharField(
+        label="Confirmă parola",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+    )
 
     class Meta:
         model = User
@@ -305,9 +336,34 @@ class UserRegisterForm(forms.ModelForm):
 
         ]
 
-        widgets = {
-            "data_nasterii": forms.DateInput(attrs={"type": "date"}),
+        labels = {
+            "username": "Nume de utilizator",
+            "email": "Email",
+            "nr_tel": "Telefon",
+            "data_nasterii": "Data nașterii",
+            "vip": "Vreau cont VIP",
+            "adresa": "Adresă de livrare",
+            "tara": "Țară",
         }
+
+        help_texts = {
+            "username": "Litere, cifre și @ . + - _ (maxim 150 de caractere).",
+        }
+
+        widgets = {
+            "username": forms.TextInput(attrs={"autocomplete": "username"}),
+            "email": forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "nume@exemplu.ro"}),
+            "nr_tel": forms.TextInput(attrs={"autocomplete": "tel", "inputmode": "numeric", "placeholder": "07xxxxxxxx"}),
+            "data_nasterii": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+            "adresa": forms.TextInput(attrs={"autocomplete": "street-address", "placeholder": "Stradă, număr, oraș"}),
+            "tara": forms.TextInput(attrs={"autocomplete": "country-name", "placeholder": "România"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # The clean_* methods below assume a value, so these must be filled in
+        for nume in ("email", "nr_tel", "data_nasterii", "tara"):
+            self.fields[nume].required = True
 
     # VALIDARE TELEFON
     def clean_nr_tel(self):

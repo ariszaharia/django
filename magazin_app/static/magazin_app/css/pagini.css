@@ -1,0 +1,426 @@
+/* ==========================================================================
+   Secondary pages: product detail, cart, about, contact, profile,
+   categories, locations, offer, admin pages.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Product detail — a CSS tub in the category's flavor, next to the facts label
+   -------------------------------------------------------------------------- */
+
+.detaliu {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.detaliu-vizual {
+  display: grid;
+  place-items: center;
+  padding: 48px 24px 40px;
+  background: var(--cat);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-l);
+  min-height: 460px;
+}
+
+.tub {
+  width: min(260px, 70%);
+  display: grid;
+  justify-items: center;
+}
+.tub-capac {
+  width: 86%;
+  height: 46px;
+  background: var(--ink);
+  border-radius: 10px 10px 4px 4px;
+  box-shadow: inset 0 -8px 0 rgba(255, 255, 255, 0.12);
+}
+.tub-corp {
+  width: 100%;
+  padding: 26px 0 30px;
+  background: var(--ink);
+  border-radius: 6px 6px 22px 22px;
+  margin-top: 4px;
+}
+.tub-label {
+  margin: 0 12px;
+  padding: 14px 12px 0;
+  background: var(--paper);
+  border-radius: 4px;
+  text-align: center;
+  overflow: hidden;
+}
+.tub-label small {
+  display: block;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--grape);
+}
+.tub-label strong {
+  display: block;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 1.75rem;
+  line-height: 0.95;
+  margin: 6px 0 10px;
+  color: var(--ink);
+}
+.tub-label .tub-g {
+  display: inline-block;
+  font-family: var(--f-display);
+  font-weight: 700;
+  padding: 1px 10px;
+  border-radius: 999px;
+  background: var(--cat);
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+.tub-label .tub-dunga-mica {
+  display: block;
+  height: 10px;
+  margin: 0 -12px;
+  background: var(--cat);
+}
+
+.detaliu-info .eticheta-titlu { font-size: clamp(2.4rem, 4.6vw, 3.6rem); }
+.detaliu-info dl { margin: 0; }
+.detaliu-cumpara {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 18px;
+}
+.detaliu-cumpara .pret { font-size: 3rem; }
+
+.ingrediente { margin-top: 48px; }
+.ingrediente h2 { margin-bottom: 16px; }
+
+/* --------------------------------------------------------------------------
+   Cart
+   -------------------------------------------------------------------------- */
+
+.cos-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 32px;
+  align-items: start;
+}
+
+.cos-lista { list-style: none; display: grid; gap: 12px; }
+
+.cos-rand {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 16px 20px;
+  padding: 16px 18px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-m);
+}
+.cos-nume { font-family: var(--f-display); font-weight: 700; font-size: 1.45rem; line-height: 1.05; }
+.cos-nume a { color: var(--ink); text-decoration: none; }
+.cos-nume a:hover { text-decoration: underline; }
+.cos-unitar { display: block; color: var(--muted); font-size: 0.92rem; margin-top: 4px; }
+
+.cantitate {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.cantitate button {
+  width: 38px;
+  height: 38px;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cantitate button:hover { background: var(--lilac); }
+.cantitate output {
+  min-width: 34px;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.cos-subtotal {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 110px;
+  text-align: right;
+}
+.cos-sterge {
+  width: 40px; height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1rem;
+}
+.cos-sterge:hover { background: #FDEBEE; color: var(--alarm); }
+
+.cos-sumar { position: sticky; top: calc(var(--nav-h) + 20px); }
+.cos-sumar .total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 0 16px;
+}
+.cos-sumar .total b {
+  font-family: var(--f-display);
+  font-size: 2.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.cos-sumar .actiuni { display: grid; gap: 8px; }
+.cos-sumar .nota { color: var(--muted); font-size: 0.92rem; margin: 12px 0 0; }
+
+.cos-gol {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--paper);
+  border: 2px dashed #B4ADC6;
+  border-radius: var(--r-l);
+}
+.cos-gol i { font-size: 3rem; color: var(--grape-hi); margin-bottom: 14px; }
+.cos-gol h2 { margin-bottom: 10px; }
+.cos-gol p { margin: 0 auto 20px; color: var(--muted); }
+
+/* --------------------------------------------------------------------------
+   About
+   -------------------------------------------------------------------------- */
+
+.despre-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 48px;
+}
+.despre-hero .lead { font-size: 1.25rem; line-height: 1.55; color: var(--ink); }
+.despre-foto {
+  background: var(--grape);
+  border-radius: var(--r-l);
+  overflow: hidden;
+  border: 2px solid var(--ink);
+}
+.despre-foto img { mix-blend-mode: lighten; width: 100%; }
+
+.valori {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.valori li {
+  padding: 22px 22px 24px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-l);
+  border-top: 12px solid var(--cat);
+}
+.valori i { font-size: 1.6rem; color: var(--grape-hi); margin-bottom: 12px; }
+.valori h3 { margin-bottom: 8px; }
+.valori p { color: var(--muted); margin: 0; }
+
+/* --------------------------------------------------------------------------
+   Two-column form pages (contact) and side panel
+   -------------------------------------------------------------------------- */
+
+.form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 32px;
+  align-items: start;
+}
+.form-layout .eticheta { padding: 22px 26px 26px; }
+
+.form-sectiune {
+  border: 0;
+  margin: 0 0 6px;
+}
+.form-sectiune legend {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  width: 100%;
+  padding-bottom: 6px;
+  margin: 10px 0 16px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.panou-grape {
+  background: var(--grape);
+  color: var(--on-grape);
+  border-radius: var(--r-l);
+  padding: 22px 24px 24px;
+}
+.panou-grape h2 {
+  color: var(--paper);
+  font-size: 2rem;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+  border-bottom: var(--rule-xl) solid var(--paper);
+}
+.panou-grape dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+.panou-grape dl > div:last-child { border-bottom: var(--rule-l) solid var(--paper); }
+.panou-grape dd { color: var(--paper); font-weight: 700; text-align: right; }
+.panou-grape p { margin: 14px 0 0; }
+
+/* --------------------------------------------------------------------------
+   Profile
+   -------------------------------------------------------------------------- */
+
+.profil-cap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--lemon);
+  border: 3px solid var(--ink);
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 2.6rem;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.eticheta-vip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--lemon);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* --------------------------------------------------------------------------
+   Offer page
+   -------------------------------------------------------------------------- */
+
+.oferta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 40px;
+  padding: 40px;
+  background: var(--grape);
+  color: var(--on-grape);
+  border-radius: var(--r-l);
+}
+.oferta-disc {
+  display: grid;
+  place-items: center;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: var(--lemon);
+  border: 4px solid var(--ink);
+  color: var(--ink);
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 5.4rem;
+  line-height: 1;
+  transform: rotate(-10deg);
+}
+.oferta h1 { color: var(--paper); margin-bottom: 14px; }
+.oferta p { font-size: 1.15rem; }
+
+/* --------------------------------------------------------------------------
+   Admin pages (info / log)
+   -------------------------------------------------------------------------- */
+
+.admin-bloc {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-m);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+.admin-bloc h2 { font-size: 1.6rem; margin-bottom: 8px; }
+.jurnal { list-style: none; font-variant-numeric: tabular-nums; }
+.jurnal li { padding: 7px 0; border-bottom: 1px solid var(--hair); }
+.jurnal li:last-child { border-bottom: 0; }
+.chei { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+.chei li { padding: 4px 12px; border-radius: 999px; background: var(--lilac); border: 1px solid var(--hair); }
+.cifre {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.cifre div {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-m);
+  padding: 16px 18px;
+}
+.cifre dt { color: var(--muted); font-weight: 600; }
+.cifre dd { font-family: var(--f-display); font-weight: 800; font-size: 1.8rem; line-height: 1.1; }
+.cifre small { font-family: var(--f-body); font-weight: 500; font-size: 0.95rem; color: var(--muted); }
+
+/* --------------------------------------------------------------------------
+   Locations
+   -------------------------------------------------------------------------- */
+
+.locatii-lista {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.locatii-lista li {
+  padding: 18px 20px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-l);
+}
+.locatii-lista h2 { font-size: 1.7rem; margin-bottom: 6px; }
+.locatii-lista p { margin: 0; color: var(--muted); }
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .detaliu, .cos-layout, .despre-hero, .form-layout { grid-template-columns: 1fr; }
+  .detaliu-vizual { min-height: 0; padding: 36px 24px; }
+  .cos-sumar { position: static; }
+  .valori { grid-template-columns: 1fr; }
+  .oferta { grid-template-columns: 1fr; justify-items: start; padding: 28px; }
+  .oferta-disc { width: 170px; height: 170px; font-size: 3.8rem; }
+}
+
+@media (max-width: 600px) {
+  .cos-rand { grid-template-columns: 1fr auto; }
+  .cos-rand .cos-info { grid-column: 1 / -1; }
+  .cos-subtotal { min-width: 0; }
+  .cos-sterge { grid-column: 2; grid-row: 1; justify-self: end; }
+  .cos-rand .cos-info { grid-column: 1; grid-row: 1; }
+}

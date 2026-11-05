@@ -1,0 +1,55 @@
+{% comment %}
+  Product card. Usage: {% include "magazin_app/_produs_card.html" with produs=p %}
+  Needs magazin_app/css/produse.css and magazin_app/js/cos.js on the page.
+{% endcomment %}
+<article class="produs{% if produs.stock_quantity == 0 %} epuizat{% endif %}"
+         id="card-{{ produs.produs_id }}"
+         data-aroma="{{ produs.categorie.culoare|default:'' }}"
+         style="--cat-raw: {{ produs.categorie.culoare|default:'#CBBFAF' }};">
+
+  <a class="produs-capac" href="{% url 'categorie_detalii' produs.categorie.name|lower %}">
+    <i class="{{ produs.categorie.icon|default:'fa-solid fa-tag' }}" aria-hidden="true"></i>
+    {{ produs.categorie.name }}
+  </a>
+
+  <div class="produs-corp">
+    <h3 class="produs-nume">
+      <a href="{% url 'produs_detalii' produs.produs_id %}">{{ produs.name }}</a>
+    </h3>
+
+    <dl class="produs-fapte">
+      <div class="eticheta-rand"><dt>Gramaj</dt><dd>{{ produs.weight|floatformat:"0" }} g</dd></div>
+      <div class="eticheta-rand">
+        <dt>Stoc</dt>
+        {% if produs.stock_quantity == 0 %}
+          <dd class="text-rosu">Epuizat</dd>
+        {% elif produs.stock_quantity <= 10 %}
+          <dd class="stoc-mic">Doar {{ produs.stock_quantity }} buc</dd>
+        {% else %}
+          <dd>{{ produs.stock_quantity }} buc</dd>
+        {% endif %}
+      </div>
+    </dl>
+
+    <div class="produs-pret">
+      <span class="pret">{{ produs.price|floatformat:2 }}<small> RON</small></span>
+      {% if produs.stock_quantity > 0 %}
+        <button type="button" class="apply-btn adauga-cos"
+                data-id="{{ produs.produs_id }}"
+                data-name="{{ produs.name }}"
+                data-price="{{ produs.price|stringformat:'s' }}"
+                data-stoc="{{ produs.stock_quantity }}"
+                aria-label="Adaugă {{ produs.name }} în coș">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i> În coș
+        </button>
+      {% else %}
+        <span class="indisponibil">Indisponibil</span>
+      {% endif %}
+    </div>
+
+    <p id="status-{{ produs.produs_id }}" data-status="{{ produs.produs_id }}" class="in-cos-badge" hidden>
+      <i class="fa-solid fa-check" aria-hidden="true"></i>
+      În coș: <span class="badge-qty">0</span> buc
+    </p>
+  </div>
+</article>

@@ -1,0 +1,11 @@
+<script>
+  document.querySelectorAll('.arata-parola').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var input = document.getElementById(btn.dataset.tinta);
+      var vizibil = input.type === 'password';
+      input.type = vizibil ? 'text' : 'password';
+      btn.textContent = vizibil ? 'Ascunde' : 'Arată';
+      btn.setAttribute('aria-pressed', vizibil);
+    });
+  });
+</script>

@@ -1,0 +1,31 @@
+{% extends "magazin_app/baza.html" %}
+
+{% block title %}Locații{% endblock %}
+
+{% block content %}
+<header class="pagina-cap">
+  <div>
+    <h1>Locații</h1>
+    <p>Magazinele și punctele de ridicare Magazin Fitness.</p>
+  </div>
+</header>
+
+{% if locatii %}
+  <ul class="locatii-lista">
+    {% for loc in locatii %}
+      <li>
+        <h2>{{ loc.oras }}</h2>
+        <p>{{ loc.adresa }} nr. {{ loc.nr }}</p>
+        <p>Jud. {{ loc.judet }}, {{ loc.cod_postal }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="cos-gol">
+    <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+    <h2>Nicio locație încă</h2>
+    <p>Momentan vindem doar online. Comanda ajunge prin curier.</p>
+    <a class="btn" href="{% url 'produse' %}">Vezi produsele</a>
+  </div>
+{% endif %}
+{% endblock %}

@@ -2,161 +2,154 @@
 {% load static %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{% static 'magazin_app/css/produse.css' %}">
+<link rel="stylesheet" href="{% static 'magazin_app/css/produse.css' %}?v={{ static_v }}">
 {% endblock %}
 
-{% block title %}Produse{% endblock %}
+{% block title %}{% if categorie %}{{ categorie.name }}{% else %}Produse{% endif %}{% endblock %}
 
 {% block content %}
 
-<h1 style="text-align:center;">
-  {% if categorie %}
-    Produsele din categoria <span style="color:{{ categorie.culoare }};">{{ categorie.name }}</span>
-  {% else %}
-    Lista produselor disponibile
-  {% endif %}
-</h1>
-
-<form method="get" class="filtru-produse">
-  <fieldset>
-    <legend><strong>Filtrare produse</strong></legend>
-    {{ form.as_p }}
-
-    <button type="submit" class="apply-btn">Aplică filtre</button>
-
-    {% if categorie %}
-  <button type="button" class="reset-btn"
-          onclick="window.location.href='{% url 'categorie_detalii' categorie.name|lower %}'">
-    Resetează filtre
-  </button>
-    {% else %}
-  <button type="button" class="reset-btn"
-          onclick="window.location.href='{% url 'produse' %}'">
-    Resetează filtre
-  </button>
-    {% endif %}
-
-  </fieldset>
-</form>
-
-
-{% if page_obj %}
-  <div class="produse-container">
-    <style>
-      .produs-indisponibil { background-color: #e9e9e9 !important; opacity: 0.6; }
-      .text-rosu { color: red; font-weight: bold; }
-      .in-cos-badge { 
-        border: 2px solid #28a745; 
-        padding: 4px 8px; 
-        border-radius: 4px; 
-        background: #f8fff9; 
-        display: none; 
-        margin-top: 10px;
-      }
-    </style>
-
-    {% for produs in page_obj %}
-      <div class="produs-card {% if produs.stock_quantity == 0 %}produs-indisponibil{% endif %}" id="card-{{ produs.produs_id }}">
-        <i class="{{ produs.categorie.icon }}" style="color: {{ produs.categorie.culoare }}; font-size: 1.4rem;"></i>
-        <h2>
-          <a href="{% url 'produs_detalii' produs.produs_id %}">{{ produs.name }}</a>
-        </h2>
-        <p><strong>Pret:</strong> {{ produs.price }} RON</p>
-        
-        <p><strong>Stoc:</strong>
-            {% if produs.stock_quantity == 0 %}
-                <span class="text-rosu">indisponibil</span>
-            {% else %}
-                <span>{{ produs.stock_quantity }} bucati</span>
-            {% endif %}
-        </p>
-
-        {% if produs.stock_quantity > 0 %}
-            <button class="apply-btn" 
-                    onclick="adaugareSimpla('{{ produs.produs_id }}', '{{ produs.name }}', {{ produs.price }}, {{ produs.stock_quantity }})">
-                Adaugă în coș
-            </button>
-        {% endif %}
-
-        <div id="status-{{ produs.produs_id }}" class="in-cos-badge">
-             În coș: <span class="badge-qty">0</span>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-
-  <div class="paginare">
-    {% if page_obj.has_previous %}
-      <a href="?page=1&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">« Prima</a>
-      <a href="?page={{ page_obj.previous_page_number }}&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">‹ Înapoi</a>
-    {% endif %}
-
-    <span>Pagina {{ page_obj.number }} din {{ page_obj.paginator.num_pages }}</span>
-
-    {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">Înainte ›</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">Ultima »</a>
-    {% endif %}
-
-    <a href="?page={{ salt_3 }}&salt=1&sort={{ sortare }}&produse_pe_pagina={{ page_obj.paginator.per_page }}">Sari 3 pagini</a>
-</div>
-
-  <script>
-   function adaugareSimpla(id, name, price, stock_quantity) {
-    let cos = JSON.parse(localStorage.getItem('cos_virtual')) || {};
-
-    if (!cos[id]) {
-        cos[id] = { 
-            name: name, 
-            price: parseFloat(price), 
-            qty: 1, 
-            stock_quantity: parseInt(stock_quantity) 
-        };
-    } else {
-        if (cos[id].qty < cos[id].stock_quantity) {
-            cos[id].qty += 1;
-        } else {
-            alert("Stoc maxim atins!");
-            return;
-        }
-    }
-
-    localStorage.setItem('cos_virtual', JSON.stringify(cos));
-    refreshBife();
-    console.log("Salvat în LocalStorage:", cos[id]);
-}
-    function refreshBife() {
-        let cos = JSON.parse(localStorage.getItem('cos_virtual')) || {};
-        document.querySelectorAll('.in-cos-badge').forEach(el => el.style.display = 'none');
-
-        for (let id in cos) {
-            let element = document.getElementById('status-' + id);
-            if (element) {
-                element.style.display = 'block';
-                element.querySelector('.badge-qty').innerText = cos[id].qty;
-            }
-        }
-    }
-
-    window.onload = refreshBife;
-</script>
-
+{% if categorie %}
+  {% url 'categorie_detalii' categorie.name|lower as url_reset %}
 {% else %}
-  <p style="text-align:center; color:gray;">Nu s-au găsit produse care corespund filtrului.</p>
+  {% url 'produse' as url_reset %}
 {% endif %}
 
-<div class="paginare">
-  {% if page_obj.has_previous %}
-    <a href="?page=1{% if sortare != 'none' %}&sort={{ sortare }}{% endif %}">« Prima</a>
-    <a href="?page={{ page_obj.previous_page_number }}{% if sortare != 'none' %}&sort={{ sortare }}{% endif %}">‹ Înapoi</a>
-  {% endif %}
+<header class="pagina-cap">
+  <div>
+    {% if categorie %}
+      <a class="inapoi" href="{% url 'categorii' %}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Toate categoriile</a>
+      <h1 class="titlu-categorie" data-aroma="{{ categorie.culoare|default:'' }}" style="--cat-raw: {{ categorie.culoare|default:'#CBBFAF' }};">
+        <span class="aroma-disc" aria-hidden="true"><i class="{{ categorie.icon|default:'fa-solid fa-tag' }}"></i></span>
+        {{ categorie.name }}
+      </h1>
+    {% else %}
+      <h1>Produse</h1>
+      <p>Proteine, creatină, aminoacizi, vitamine și minerale pentru antrenament și recuperare.</p>
+    {% endif %}
+  </div>
 
-  <span>Pagina {{ page_obj.number }} din {{ page_obj.paginator.num_pages }}</span>
+  <div class="sortare">
+    <label for="sortare-select">Sortează după</label>
+    <select id="sortare-select" name="sort" form="filtru" onchange="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit()">
+      {% for valoare, eticheta in form.fields.sort.choices %}
+        <option value="{{ valoare }}" {% if sortare == valoare %}selected{% endif %}>{{ eticheta }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</header>
 
-  {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}{% if sortare != 'none' %}&sort={{ sortare }}{% endif %}">Înainte ›</a>
-    <a href="?page={{ page_obj.paginator.num_pages }}{% if sortare != 'none' %}&sort={{ sortare }}{% endif %}">Ultima »</a>
-  {% endif %}
+<div class="magazin">
+
+  <aside class="filtre">
+    <details class="filtre-panou" id="filtre-panou" open>
+      <summary class="btn-secundar filtre-buton">
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i> Filtre
+      </summary>
+
+      <form method="get" class="eticheta filtru-produse" id="filtru" novalidate>
+        <h2 class="eticheta-titlu">Filtre</h2>
+        <div class="eticheta-sub">
+          <span>Produse găsite</span>
+          <b>{{ page_obj.paginator.count }}</b>
+        </div>
+
+        {% if form.non_field_errors %}
+          <ul class="errorlist nonfield">
+            {% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+
+        <div class="filtru-grup">
+          {% include "magazin_app/_camp.html" with field=form.nume %}
+        </div>
+
+        <fieldset class="filtru-grup">
+          <legend>Preț (RON)</legend>
+          {{ form.pret_min.errors }}{{ form.pret_max.errors }}
+          <div class="interval">
+            <label class="vizual-ascuns" for="{{ form.pret_min.id_for_label }}">{{ form.pret_min.label }}</label>
+            {{ form.pret_min }}
+            <span aria-hidden="true">–</span>
+            <label class="vizual-ascuns" for="{{ form.pret_max.id_for_label }}">{{ form.pret_max.label }}</label>
+            {{ form.pret_max }}
+          </div>
+        </fieldset>
+
+        <div class="filtru-grup ultim">
+          {% include "magazin_app/_camp.html" with field=form.categorie %}
+          {% include "magazin_app/_camp.html" with field=form.produse_pe_pagina %}
+        </div>
+
+        <div class="filtre-actiuni">
+          <button type="submit" class="apply-btn btn-lat">Aplică filtrele</button>
+          <a class="reset-btn btn-lat" href="{{ url_reset }}">Resetează</a>
+        </div>
+      </form>
+    </details>
+  </aside>
+
+  <section class="rezultate" aria-label="Rezultate">
+    {% if page_obj.object_list %}
+      <p class="rezultate-info">
+        Afișezi {{ page_obj.start_index }}–{{ page_obj.end_index }} din {{ page_obj.paginator.count }} produse
+      </p>
+
+      <div class="produse-grid">
+        {% for produs in page_obj %}
+          {% include "magazin_app/_produs_card.html" with produs=produs %}
+        {% endfor %}
+      </div>
+
+      {% if page_obj.paginator.num_pages > 1 %}
+        <nav class="paginare" aria-label="Pagini">
+          {% if page_obj.has_previous %}
+            <a class="pag-pas" href="?{% if filtre_qs %}{{ filtre_qs }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">
+              <i class="fa-solid fa-chevron-left" aria-hidden="true"></i> Înapoi
+            </a>
+          {% endif %}
+
+          <ol class="pag-numere">
+            {% for nr in pagini %}
+              {% if nr == page_obj.paginator.ELLIPSIS %}
+                <li><span class="pag-gol">…</span></li>
+              {% elif nr == page_obj.number %}
+                <li><span class="pag-activ" aria-current="page">{{ nr }}</span></li>
+              {% else %}
+                <li><a href="?{% if filtre_qs %}{{ filtre_qs }}&amp;{% endif %}page={{ nr }}">{{ nr }}</a></li>
+              {% endif %}
+            {% endfor %}
+          </ol>
+
+          {% if page_obj.has_next %}
+            <a class="pag-pas" href="?{% if filtre_qs %}{{ filtre_qs }}&amp;{% endif %}page={{ page_obj.next_page_number }}">
+              Înainte <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </a>
+          {% endif %}
+
+          {% if salt_3 %}
+            <a class="pag-salt" href="?{% if filtre_qs %}{{ filtre_qs }}&amp;{% endif %}page={{ salt_3 }}&amp;salt=1">Sari 3 pagini</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+
+    {% else %}
+      <div class="gol-stare eticheta">
+        <h2 class="eticheta-titlu">0 produse</h2>
+        <p>Niciun produs nu se potrivește filtrelor alese. Încearcă un interval de preț mai larg sau alt nume.</p>
+        <a class="btn" href="{{ url_reset }}">Resetează filtrele</a>
+      </div>
+    {% endif %}
+  </section>
 </div>
+{% endblock %}
 
+{% block scripts %}
+<script src="{% static 'magazin_app/js/cos.js' %}?v={{ static_v }}"></script>
+<script>
+  // On small screens start with the filter panel collapsed
+  if (window.matchMedia('(max-width: 900px)').matches) {
+    document.getElementById('filtre-panou').removeAttribute('open');
+  }
+</script>
 {% endblock %}

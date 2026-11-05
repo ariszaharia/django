@@ -1,16 +1,103 @@
 {% extends "magazin_app/baza.html" %}
+{% load static %}
+
 {% block title %}{{ produs.name }}{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'magazin_app/css/produse.css' %}?v={{ static_v }}">
+{% endblock %}
+
 {% block content %}
-  <div class="produs-detalii">
-    <h1>{{ produs.name }}</h1>
-    <p><strong>Preț:</strong> {{ produs.price }} RON</p>
-    <p><strong>Categorie:</strong> {{ produs.categorie.name }}</p>
-    <p><strong>Greutate:</strong> {{ produs.weight }} g</p>
-    <p><strong>Stoc:</strong> {{ produs.stock_quantity }} bucăți</p>
-    <p><strong>Furnizor:</strong> {{ produs.furnizor.name }}</p>
-  
+<a class="inapoi" href="{% url 'categorie_detalii' produs.categorie.name|lower %}">
+  <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> {{ produs.categorie.name }}
+</a>
+
+<div class="detaliu" data-aroma="{{ produs.categorie.culoare|default:'' }}" style="--cat-raw: {{ produs.categorie.culoare|default:'#CBBFAF' }};">
+
+  <div class="detaliu-vizual" aria-hidden="true">
+    <div class="tub">
+      <div class="tub-capac"></div>
+      <div class="tub-corp">
+        <div class="tub-label">
+          <small>Magazin Fitness</small>
+          <strong>{{ produs.name }}</strong>
+          <span class="tub-g">{{ produs.weight|floatformat:"0" }} g</span>
+          <span class="tub-dunga-mica"></span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <a href="{% url 'produse' %}" class="btn-back">← Înapoi la produse</a>
+  <section class="detaliu-info eticheta" aria-labelledby="produs-titlu">
+    <h1 class="eticheta-titlu" id="produs-titlu">{{ produs.name }}</h1>
+    <div class="eticheta-sub">
+      <span>Categorie</span>
+      <a href="{% url 'categorie_detalii' produs.categorie.name|lower %}">{{ produs.categorie.name }}</a>
+    </div>
+
+    <dl>
+      <div class="eticheta-rand"><dt>Gramaj</dt><dd>{{ produs.weight|floatformat:"0" }} g</dd></div>
+      <div class="eticheta-rand">
+        <dt>Stoc</dt>
+        {% if produs.stock_quantity == 0 %}
+          <dd class="text-rosu">Epuizat</dd>
+        {% elif produs.stock_quantity <= 10 %}
+          <dd class="stoc-mic">Doar {{ produs.stock_quantity }} buc</dd>
+        {% else %}
+          <dd>{{ produs.stock_quantity }} buc</dd>
+        {% endif %}
+      </div>
+      <div class="eticheta-rand eticheta-final"><dt>Furnizor</dt><dd>{{ produs.furnizor.name }}</dd></div>
+    </dl>
+
+    <div class="detaliu-cumpara">
+      <span class="pret">{{ produs.price|floatformat:2 }}<small> RON</small></span>
+      {% if produs.stock_quantity > 0 %}
+        <button type="button" class="btn adauga-cos"
+                data-id="{{ produs.produs_id }}"
+                data-name="{{ produs.name }}"
+                data-price="{{ produs.price|stringformat:'s' }}"
+                data-stoc="{{ produs.stock_quantity }}">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i> Adaugă în coș
+        </button>
+      {% else %}
+        <span class="indisponibil">Indisponibil momentan</span>
+      {% endif %}
+    </div>
+
+    <p data-status="{{ produs.produs_id }}" class="in-cos-badge" hidden>
+      <i class="fa-solid fa-check" aria-hidden="true"></i>
+      În coș: <span class="badge-qty">0</span> buc. <a href="{% url 'cos' %}">Vezi coșul</a>
+    </p>
+  </section>
+</div>
+
+{% with ingrediente=produs.ingrediente.all %}
+  {% if ingrediente %}
+    <section class="ingrediente" aria-labelledby="ingrediente-titlu">
+      <h2 id="ingrediente-titlu">Ingrediente</h2>
+      <div class="tabel-wrap">
+        <table class="tabel">
+          <thead>
+            <tr><th>Ingredient</th><th>Beneficiu</th><th>Proteine / 100 g</th><th>Țara de origine</th></tr>
+          </thead>
+          <tbody>
+            {% for ing in ingrediente %}
+              <tr>
+                <td><strong>{{ ing.name }}</strong></td>
+                <td>{{ ing.benefit }}</td>
+                <td>{{ ing.protein_per_100g }} g</td>
+                <td>{{ ing.country_from }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  {% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'magazin_app/js/cos.js' %}?v={{ static_v }}"></script>
 {% endblock %}

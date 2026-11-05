@@ -1,84 +1,182 @@
-{% load static %}
-<!DOCTYPE html>
+{% load static %}{% load cache %}<!DOCTYPE html>
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Magazin Online{% endblock %}</title>
+  <title>{% block title %}Magazin Fitness{% endblock %} | Magazin Fitness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <link rel="stylesheet" href="{% static 'magazin_app/css/baza.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'magazin_app/css/baza.css' %}?v={{ static_v }}">
+  <link rel="stylesheet" href="{% static 'magazin_app/css/pagini.css' %}?v={{ static_v }}">
   {% block extra_head %}{% endblock %}
 </head>
 <body>
-  <header>
-    <nav class="navbar">
-      <div class="logo">Magazin Online</div>
-      <ul class="nav-links">
+  {% with pagina=request.resolver_match.url_name %}
+  <header class="site-header" id="site-header">
+    <nav class="navbar" aria-label="Navigare principală">
+      <a class="logo" href="{% url 'index' %}">
+        <span class="logo-arome" aria-hidden="true">
+          <i style="--c: var(--f-lamaie)"></i><i style="--c: var(--f-portocala)"></i><i style="--c: var(--f-cirese)"></i>
+          <i style="--c: var(--f-strugure)"></i><i style="--c: var(--f-zmeura)"></i><i style="--c: var(--f-biscuit)"></i>
+        </span>
+        Magazin<span>Fitness</span>
+      </a>
 
-        <li><a href="{% url 'produse' %}">Produse</a></li>
-        <li><a href="{% url 'cos' %}">Cos</a></li>
-        <li><a href="{% url 'despre' %}">Despre noi</a></li>
-        <li><a href="{% url 'contact' %}">Contact</a></li>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i> Meniu
+      </button>
 
-        {% if request.user.is_authenticated %}
-          <li><a href="{% url 'profile' %}">Profil</a></li>
-          <li><a href="{% url 'logout' %}" onclick="localStorage.removeItem('cos_virtual');">Logout</a></li>
-          <li><a href="{% url 'actualizeaza_date' %}">Actualizează date</a></li>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="{% url 'produse' %}" {% if pagina == 'produse' %}aria-current="page"{% endif %}>Produse</a></li>
 
-          {% if request.session.id_administrator_site %}
-            <li><a href="{% url 'info' %}">Info</a></li>
-            <li><a href="{% url 'log' %}">Log</a></li>
-          {% endif %}
-
-          {% if request.session.is_admin_produse %}
-            <li><a href="{% url 'adauga_produs' %}">Adaugă produs</a></li>
-          {% endif %}
-
-        {% else %}
-          <li><a href="{% url 'login' %}">Login</a></li>
-          <li><a href="{% url 'register' %}">Inregistrare</a></li>
-        {% endif %}
-
-        {% load cache %}
         <li class="dropdown">
-          <span class="dropbtn">Categorii ▼</span>
+          <button class="dropbtn" type="button" aria-expanded="false" aria-haspopup="true">
+            Categorii<i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+          </button>
           <div class="dropdown-content">
-            {% cache 86000 categorii_meniu %}
-            {% if categorii_meniu %}
+            {% cache 86000 categorii_meniu_v3 %}
               {% for cat in categorii_meniu %}
-                <a href="{% url 'categorie_detalii' cat.name|lower %}">
-                  <i class="{{ cat.icon }}" style="color: {{ cat.culoare }};"></i>
-                  {{ cat.name }}
+                <a href="{% url 'categorie_detalii' cat.name|lower %}" data-aroma="{{ cat.culoare|default:'' }}" style="--cat-raw: {{ cat.culoare|default:'#CBBFAF' }};">
+                  <span class="bulina" aria-hidden="true"><i class="{{ cat.icon|default:'fa-solid fa-tag' }}"></i></span>{{ cat.name }}
                 </a>
+              {% empty %}
+                <span class="gol">Nicio categorie încă</span>
               {% endfor %}
-            {% else %}
-              <span style="padding:10px; color:gray;">Nicio categorie</span>
-            {% endif %}
-          {% endcache %}
+            {% endcache %}
+            <a class="toate" href="{% url 'categorii' %}">Toate categoriile</a>
           </div>
         </li>
-  
 
+        <li><a href="{% url 'despre' %}" {% if pagina == 'despre' %}aria-current="page"{% endif %}>Despre noi</a></li>
+        <li><a href="{% url 'contact' %}" {% if pagina == 'contact' %}aria-current="page"{% endif %}>Contact</a></li>
+
+        {% if request.session.id_administrator_site %}
+          <li><a href="{% url 'info' %}">Info</a></li>
+          <li><a href="{% url 'log' %}">Log</a></li>
+        {% endif %}
+        {% if request.session.is_admin_produse %}
+          <li><a href="{% url 'adauga_produs' %}" {% if pagina == 'adauga_produs' %}aria-current="page"{% endif %}>Adaugă produs</a></li>
+        {% endif %}
+
+        <li class="nav-spacer" aria-hidden="true"></li>
+
+        <li>
+          <a href="{% url 'cos' %}" {% if pagina == 'cos' %}aria-current="page"{% endif %}>
+            <i class="fa-solid fa-basket-shopping" aria-hidden="true"></i> Coș<span class="nr-cos" id="nr-cos" hidden></span>
+          </a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <li><a href="{% url 'profile' %}" {% if pagina == 'profile' %}aria-current="page"{% endif %}>
+            <i class="fa-regular fa-user" aria-hidden="true"></i> {{ request.user.username }}
+          </a></li>
+          <li><a href="{% url 'actualizeaza_date' %}" {% if pagina == 'actualizeaza_date' %}aria-current="page"{% endif %}>Actualizează date</a></li>
+          <li><a href="{% url 'logout' %}" onclick="localStorage.removeItem('cos_virtual');">Ieși din cont</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}" {% if pagina == 'login' %}aria-current="page"{% endif %}>Intră în cont</a></li>
+          <li><a class="nav-cta" href="{% url 'register' %}">Creează cont</a></li>
+        {% endif %}
       </ul>
     </nav>
   </header>
+  {% endwith %}
 
-  <main>
-    {% block content %}
-      {% if messages %}
-        <div class="messages">
-          {% for message in messages %}
-            <div class="alert {{ message.tags }}">
-              {{ message }}
-            </div>
-          {% endfor %}
+  {% if messages %}
+    <div class="mesaje" role="status">
+      {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+          {% if message.level_tag == 'error' %}<i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+          {% elif message.level_tag == 'success' %}<i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          {% elif message.level_tag == 'warning' %}<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          {% else %}<i class="fa-solid fa-circle-info" aria-hidden="true"></i>{% endif %}
+          <div>{% if 'html' in message.extra_tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}</div>
         </div>
-{% endif %}
-    {% endblock %}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main class="{% block main_class %}{% endblock %}">
+    {% block content %}{% endblock %}
   </main>
 
-  <footer>
-    <p>IP utilizator: {{ ip }}</p>
+  <footer class="site-footer">
+    <div class="dunga-arome" aria-hidden="true">
+      <i style="--c: var(--f-lamaie)"></i><i style="--c: var(--f-portocala)"></i><i style="--c: var(--f-cirese)"></i>
+      <i style="--c: var(--f-strugure)"></i><i style="--c: var(--f-zmeura)"></i><i style="--c: var(--f-biscuit)"></i>
+    </div>
+    <div class="footer-inner">
+      <div>
+        <h2>Magazin Fitness</h2>
+        <p>Suplimente pentru antrenament și recuperare: proteine, creatină, aminoacizi, vitamine și minerale.</p>
+      </div>
+      <div>
+        <h3>Magazin</h3>
+        <ul>
+          <li><a href="{% url 'produse' %}">Toate produsele</a></li>
+          <li><a href="{% url 'categorii' %}">Categorii</a></li>
+          <li><a href="{% url 'locatii' %}">Locații</a></li>
+          <li><a href="{% url 'despre' %}">Despre noi</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Contul tău</h3>
+        <ul>
+          <li><a href="{% url 'cos' %}">Coșul de cumpărături</a></li>
+          {% if request.user.is_authenticated %}
+            <li><a href="{% url 'profile' %}">Profil</a></li>
+            <li><a href="{% url 'change_password' %}">Schimbă parola</a></li>
+          {% else %}
+            <li><a href="{% url 'login' %}">Intră în cont</a></li>
+            <li><a href="{% url 'register' %}">Creează cont</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    <div class="footer-jos">
+      <span>Proiect realizat de Zaharia Aris Cristian</span>
+      <span>IP utilizator: {% if ip %}{{ ip }}{% else %}{{ request.META.REMOTE_ADDR }}{% endif %}</span>
+    </div>
   </footer>
+
+  <script>
+    (function () {
+      var header = document.getElementById('site-header');
+      var toggle = header.querySelector('.nav-toggle');
+      toggle.addEventListener('click', function () {
+        var deschis = header.classList.toggle('deschis');
+        toggle.setAttribute('aria-expanded', deschis);
+      });
+
+      var dropdown = header.querySelector('.dropdown');
+      var dropbtn = dropdown.querySelector('.dropbtn');
+      function inchide() {
+        dropdown.classList.remove('deschis');
+        dropbtn.setAttribute('aria-expanded', 'false');
+      }
+      dropbtn.addEventListener('click', function () {
+        var deschis = dropdown.classList.toggle('deschis');
+        dropbtn.setAttribute('aria-expanded', deschis);
+      });
+      document.addEventListener('click', function (e) { if (!dropdown.contains(e.target)) inchide(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') inchide(); });
+
+      // Cart count badge, shared by every page that changes the cart
+      window.actualizeazaNrCos = function () {
+        var nr = 0;
+        try {
+          var cos = JSON.parse(localStorage.getItem('cos_virtual') || '{}') || {};
+          Object.keys(cos).forEach(function (id) { nr += parseInt(cos[id].qty, 10) || 0; });
+        } catch (e) {}
+        var el = document.getElementById('nr-cos');
+        el.textContent = nr;
+        el.hidden = nr === 0;
+      };
+      window.actualizeazaNrCos();
+    })();
+  </script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

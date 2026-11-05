@@ -1,22 +1,32 @@
 {% extends "magazin_app/baza.html" %}
 
-{% block title %}Profil utilizator{% endblock %}
+{% block title %}Profilul tău{% endblock %}
 
 {% block content %}
-  <section class="profil">
-    <h2>Bine ai venit, {{ user.username }}!</h2>
+<div class="ingust">
+  <div class="profil-cap">
+    <span class="avatar" aria-hidden="true">{{ user.username|first }}</span>
+    <div>
+      <h1>{{ user.username }}</h1>
+      {% if user.vip %}<span class="eticheta-vip"><i class="fa-solid fa-star" aria-hidden="true"></i> Client VIP</span>{% endif %}
+    </div>
+  </div>
 
-    <ul>
-      <li><strong>Email:</strong> {{ user.email }}</li>
-      <li><strong>Telefon:</strong> {{ user.nr_tel }}</li>
-      <li><strong>Țară:</strong> {{ user.tara }}</li>
-      <li><strong>Adresă:</strong> {{ user.adresa }}</li>
-      <li><strong>VIP:</strong> {{ user.vip|yesno:"Da,Nu" }}</li>
-    </ul>
+  <section class="eticheta" aria-labelledby="date-titlu">
+    <h2 class="eticheta-titlu" id="date-titlu">Datele tale</h2>
+    <dl>
+      <div class="eticheta-rand"><dt>Email</dt><dd>{{ user.email|default:"—" }}</dd></div>
+      <div class="eticheta-rand"><dt>Țară</dt><dd>{{ user.tara|default:"—" }}</dd></div>
+      <div class="eticheta-rand"><dt>Adresă de livrare</dt><dd>{{ user.adresa|default:"—" }}</dd></div>
+      <div class="eticheta-rand"><dt>Cont VIP</dt><dd>{{ user.vip|yesno:"Da,Nu" }}</dd></div>
+      <div class="eticheta-rand eticheta-final"><dt>Conectat din</dt><dd>{{ user.logged_in_at|slice:":16"|default:"—" }}</dd></div>
+    </dl>
 
-    <p>
-      <a href="{% url 'change_password' %}" class="btn">Schimbă parola</a> |
-      <a href="{% url 'logout' %}" class="btn">Logout</a>
-    </p>
+    <div class="form-actiuni" style="border-top:0; padding-top:16px">
+      <a class="btn" href="{% url 'actualizeaza_date' %}">Actualizează datele</a>
+      <a class="btn-secundar" href="{% url 'change_password' %}">Schimbă parola</a>
+      <a class="btn-secundar" href="{% url 'logout' %}" onclick="localStorage.removeItem('cos_virtual');">Ieși din cont</a>
+    </div>
   </section>
+</div>
 {% endblock %}

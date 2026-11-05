@@ -1,0 +1,19 @@
+{% extends "magazin_app/baza.html" %}
+
+{% block title %}Eroare{% endblock %}
+
+{% block content %}
+<div class="stare eroare">
+  <div class="stare-cap">
+    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+    <h1>Cererea nu a putut fi procesată</h1>
+  </div>
+  <div class="stare-corp">
+    <p class="lead">{{ mesaj|default:"Ceva nu a mers bine." }}</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn" href="{% url 'produse' %}">Înapoi la produse</a>
+      <a class="btn-secundar" href="{% url 'index' %}">Pagina principală</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

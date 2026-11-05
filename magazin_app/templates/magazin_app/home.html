@@ -1,61 +1,139 @@
 {% extends 'magazin_app/baza.html' %}
-{% block title %}Pagina principală{% endblock %}
 {% load static %}
 
-{% block content %}
-  <h1 style="text-align: center;">Zaharia Aris Cristian</h1>
-  <br>
-  <h2 style="text-align: center;">Proiect Magazin Fitness</h2>
-  {% if request.session.user_id %}
-<script>
-    if (Math.random() < 0.3) {
-        const banner = document.createElement("div");
-        banner.innerHTML = `
-            <div id="oferta-banner" style="
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: red;
-                color: white;
-                padding: 20px;
-                border-radius: 10px;
-                cursor: pointer;
-                animation: pulse 1s infinite;
-            ">
-                Oferta! Reducere 50%! Click aici!
-            </div>
+{% block title %}Suplimente pentru sală{% endblock %}
 
-            <style>
-                @keyframes pulse {
-                    0% { transform: scale(1); }
-                    50% { transform: scale(1.1); }
-                    100% { transform: scale(1); }
-                }
-            </style>
-        `;
-        document.body.appendChild(banner);
-
-        document.getElementById("oferta-banner").onclick = function() {
-            window.location.href = "/activeaza_oferta/";
-        }
-    }
-</script>
-{% endif %}
-
-  <br>
-  <h3>
-    Proiectul meu are ca scop realizarea unui site comerical dedicat unui magazin de suplimente pentru fitness. 
-    Platforma permite utilizatorilor să exploreze și să cumpere produse din diverse categorii, 
-    precum proteine, creatină, vitamine sau batoane nutritive, prin intermediul unui coș de cumpărături virtual. 
-    Fiecare supliment dispune de o pagină proprie unde sunt prezentate detalii esențiale: prețul, lista ingredientelor, 
-    doza recomandată și beneficiile principale. Pentru a găsi mai ușor produsele potrivite, 
-    vizitatorii pot aplica filtre după criterii precum preț, tipul de supliment sau obiectivele de fitness urmărite. 
-    De asemenea, platforma oferă posibilitatea de a contacta direct echipa de suport clienți. Funcționalitățile avansate, 
-    cum ar fi salvarea produselor favorite sau păstrarea datelor de comandă (informații de contact, adresă de livrare, 
-    metode de plată), sunt disponibile exclusiv pentru utilizatorii autentificați. 
-    Dupa ce comanda este platita, utilizatorul va primi factura pe e-mail,
-    loc în care se vor trimite și promoții sau reduceri atractive.
-  </h3>
-  <img src="{% static 'magazin_app/imagini/imagine.webp' %}" style="display: block; margin-left: auto; margin-right: auto; margin-top:50px; height : 400px">
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'magazin_app/css/produse.css' %}?v={{ static_v }}">
+<link rel="stylesheet" href="{% static 'magazin_app/css/home.css' %}?v={{ static_v }}">
 {% endblock %}
 
+{% block main_class %}lat{% endblock %}
+
+{% block content %}
+
+<section class="hero pe-grape" aria-labelledby="hero-titlu">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1 id="hero-titlu">Proteine, creatină și vitamine pentru sală</h1>
+      <p class="hero-sub">
+        {{ statistici.nr_produse }} produse în {{ categorii_numarate|length }} categorii{% if statistici.pret_min %}, de la {{ statistici.pret_min|floatformat:2 }} RON{% endif %}.
+        Pui produsele în coș fără cont, iar factura vine pe email după comandă.
+      </p>
+      <div class="hero-actiuni">
+        <a class="btn" href="{% url 'produse' %}">Vezi produsele</a>
+        <a class="btn-secundar" href="#categorii">Alege o categorie</a>
+      </div>
+    </div>
+
+    <div class="hero-foto">
+      <img src="{% static 'magazin_app/imagini/imagine.webp' %}" width="1000" height="833"
+           alt="Sportiv care arată spre un recipient de proteină Magazin Fitness">
+      <div class="tub-eticheta" aria-hidden="true">
+        <span class="tub-brand">Magazin Fitness</span>
+        <span class="tub-produs">Whey Gold</span>
+        <span class="tub-gramaj">2 kg</span>
+        <span class="tub-dunga"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      </div>
+    </div>
+  </div>
+  <div class="dunga-arome" aria-hidden="true">
+    <i style="--c: var(--f-lamaie)"></i><i style="--c: var(--f-portocala)"></i><i style="--c: var(--f-cirese)"></i>
+    <i style="--c: var(--f-strugure)"></i><i style="--c: var(--f-zmeura)"></i><i style="--c: var(--f-biscuit)"></i>
+  </div>
+</section>
+
+<section class="sectiune" id="categorii" aria-labelledby="categorii-titlu">
+  <div class="continut">
+    <header class="sectiune-cap">
+      <h2 id="categorii-titlu">Categorii</h2>
+      <a href="{% url 'categorii' %}">Toate categoriile</a>
+    </header>
+
+    <ul class="perete-arome">
+      {% for cat in categorii_numarate %}
+        <li>
+          <a class="aroma-tile" href="{% url 'categorie_detalii' cat.name|lower %}"
+             data-aroma="{{ cat.culoare|default:'' }}" style="--cat-raw: {{ cat.culoare|default:'#CBBFAF' }};">
+            <i class="{{ cat.icon|default:'fa-solid fa-tag' }}" aria-hidden="true"></i>
+            <span class="aroma-nume">{{ cat.name }}</span>
+            <span class="aroma-nr">{{ cat.nr_produse }} produs{{ cat.nr_produse|pluralize:"e" }}</span>
+          </a>
+        </li>
+      {% empty %}
+        <li class="gol">Nu există categorii încă.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% if noutati %}
+<section class="sectiune" aria-labelledby="noutati-titlu">
+  <div class="continut">
+    <header class="sectiune-cap">
+      <h2 id="noutati-titlu">Adăugate recent</h2>
+      <a href="{% url 'produse' %}">Toate produsele</a>
+    </header>
+
+    <div class="produse-grid">
+      {% for produs in noutati %}
+        {% include "magazin_app/_produs_card.html" with produs=produs %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="sectiune" aria-labelledby="pasi-titlu">
+  <div class="continut">
+    <header class="sectiune-cap">
+      <h2 id="pasi-titlu">Cum comanzi</h2>
+    </header>
+
+    <ol class="pasi">
+      <li>
+        <span class="pas-nr" aria-hidden="true">1</span>
+        <h3>Pui produsele în coș</h3>
+        <p>Coșul se păstrează în browser, chiar dacă nu ai cont.</p>
+      </li>
+      <li>
+        <span class="pas-nr" aria-hidden="true">2</span>
+        <h3>Intri în cont și finalizezi</h3>
+        <p>Verificăm stocul la momentul comenzii, așa că primești exact ce ai ales.</p>
+      </li>
+      <li>
+        <span class="pas-nr" aria-hidden="true">3</span>
+        <h3>Primești factura pe email</h3>
+        <p>Factura vine în format PDF, imediat după ce comanda e înregistrată.</p>
+      </li>
+    </ol>
+
+    {% if not request.user.is_authenticated %}
+      <div class="cont-banda pe-grape">
+        <p>Ai nevoie de un cont pentru pasul 2. Durează un minut.</p>
+        <div class="hero-actiuni">
+          <a class="btn" href="{% url 'register' %}">Creează cont</a>
+          <a class="btn-secundar" href="{% url 'login' %}">Am deja cont</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if request.session.user_id %}
+  <a class="oferta-sticker" id="oferta-banner" href="{% url 'activeaza_oferta' %}" hidden>
+    <span><b>−50%</b>ofertă<br>pentru tine</span>
+  </a>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'magazin_app/js/cos.js' %}?v={{ static_v }}"></script>
+{% if request.session.user_id %}
+<script>
+  // The offer shows up for roughly 3 in 10 visits
+  if (Math.random() < 0.3) document.getElementById('oferta-banner').hidden = false;
+</script>
+{% endif %}
+{% endblock %}

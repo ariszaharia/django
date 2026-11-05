@@ -1,7 +1,17 @@
 {% extends "magazin_app/baza.html" %}
 
-{% block content %}
-    <h1>Pagina în lucru</h1>
-    <p>Ne cerem scuze. Această pagină este în curs de dezvoltare și va fi disponibilă în curând.</p>
+{% block title %}Pagină în lucru{% endblock %}
 
+{% block content %}
+<div class="stare">
+  <div class="stare-cap">
+    <i class="fa-solid fa-person-digging" aria-hidden="true"></i>
+    <h1>Pagină în lucru</h1>
+  </div>
+  <div class="stare-corp">
+    <p class="lead">Pagina asta încă se construiește.</p>
+    <p>Până atunci, produsele sunt toate disponibile în magazin.</p>
+    <a class="btn" href="{% url 'produse' %}">Vezi produsele</a>
+  </div>
+</div>
 {% endblock %}

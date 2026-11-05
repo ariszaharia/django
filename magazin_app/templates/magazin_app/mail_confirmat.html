@@ -1,17 +1,17 @@
 {% extends "magazin_app/baza.html" %}
 
+{% block title %}Email confirmat{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="alert alert-success text-center p-4 shadow-sm">
-        <h2>Email confirmat cu succes!</h2>
-
-        <p class="lead">
-            Mulțumim, <strong>{{ user.username }}</strong>.
-        </p>
-
-        <p>Contul tau a fost activat. Te poti autentifica acum.</p>
-
-        <a href="{% url 'login' %}" class="btn btn-primary mt-3">Mergi la login</a>
-    </div>
+<div class="stare succes">
+  <div class="stare-cap">
+    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+    <h1>Email confirmat</h1>
+  </div>
+  <div class="stare-corp">
+    <p class="lead">Mulțumim, <strong>{{ user.username }}</strong>. Contul tău e activ.</p>
+    <p>Acum poți intra în cont și finaliza comenzi.</p>
+    <a href="{% url 'login' %}" class="btn">Intră în cont</a>
+  </div>
 </div>
 {% endblock %}

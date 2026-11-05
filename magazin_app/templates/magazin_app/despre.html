@@ -2,12 +2,43 @@
 {% load static %}
 
 {% block title %}Despre noi{% endblock %}
-{% block content %}
-<h1>Despre noi</h1>
-<h3>Magazinul nostru de suplimente fitness oferă produse de înaltă calitate dedicate pasionaților de sport, 
-    performanță și un stil de viață sănătos. Ne dorim să sprijinim fiecare client în atingerea obiectivelor
-     sale printr-o gamă variată de proteine, vitamine, aminoacizi și alte suplimente esențiale. Punem accent
-      pe transparență, siguranță și consiliere profesională, astfel încât fiecare achiziție să contribuie la rezultate reale și durabile.</h3>
 
-<img src="{% static 'magazin_app/imagini/imagine.webp' %}" style="height : 400px">
+{% block content %}
+<div class="despre-hero">
+  <div>
+    <h1>Despre noi</h1>
+    <p class="lead" style="margin-top:20px">
+      Vindem suplimente pentru oamenii care se antrenează: proteine, vitamine, aminoacizi și tot ce
+      ajută la performanță și la recuperare.
+    </p>
+    <p>
+      Ne dorim să sprijinim fiecare client în atingerea obiectivelor sale. De aceea punem accent pe
+      transparență, siguranță și consiliere, astfel încât fiecare achiziție să contribuie la rezultate
+      reale și durabile.
+    </p>
+    <a class="btn" href="{% url 'produse' %}">Vezi produsele</a>
+  </div>
+  <div class="despre-foto">
+    <img src="{% static 'magazin_app/imagini/imagine.webp' %}" width="1000" height="833"
+         alt="Sportiv care ține un recipient de suplimente">
+  </div>
+</div>
+
+<ul class="valori">
+  <li data-aroma="yellow">
+    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+    <h3>Transparență</h3>
+    <p>La fiecare produs vezi gramajul, stocul, furnizorul și ingredientele, cu proteinele pe 100 g.</p>
+  </li>
+  <li data-aroma="blue">
+    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+    <h3>Siguranță</h3>
+    <p>Stocul e verificat în momentul în care plasezi comanda, așa că nu plătești pentru produse care lipsesc.</p>
+  </li>
+  <li data-aroma="red">
+    <i class="fa-solid fa-comments" aria-hidden="true"></i>
+    <h3>Consiliere</h3>
+    <p>Nu știi ce ți se potrivește? Scrie-ne din pagina de contact și îți răspundem.</p>
+  </li>
+</ul>
 {% endblock %}

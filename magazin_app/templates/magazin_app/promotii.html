@@ -1,13 +1,45 @@
 {% extends "magazin_app/baza.html" %}
+
+{% block title %}Creează promoții{% endblock %}
+
 {% block content %}
+<div class="mediu">
+  <section class="eticheta" aria-labelledby="promotii-titlu" style="padding:22px 26px 26px">
+    <h1 class="eticheta-titlu" id="promotii-titlu">Creează promoții</h1>
+    <p class="eticheta-sub" style="margin-bottom:22px">
+      <span>Emailul ajunge la clienții care au vizualizat produse din categoriile alese.</span>
+    </p>
 
-<h2 style="margin-bottom:20px;">Creare promoții</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
+      {% if form.non_field_errors %}
+        <ul class="errorlist nonfield">
+          {% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}
+        </ul>
+      {% endif %}
 
-    <button class="btn btn-primary">Trimite promoțiile</button>
-</form>
+      <fieldset class="form-sectiune">
+        <legend>Promoția</legend>
+        <div class="form-grid">
+          {% include "magazin_app/_camp.html" with field=form.nume clasa="intreg" %}
+          {% include "magazin_app/_camp.html" with field=form.reducere %}
+          {% include "magazin_app/_camp.html" with field=form.data_expirare %}
+          {% include "magazin_app/_camp.html" with field=form.descriere clasa="intreg" %}
+          {% include "magazin_app/_camp.html" with field=form.categorii clasa="intreg" %}
+        </div>
+      </fieldset>
 
+      <fieldset class="form-sectiune">
+        <legend>Emailul</legend>
+        {% include "magazin_app/_camp.html" with field=form.subiect %}
+        {% include "magazin_app/_camp.html" with field=form.mesaj %}
+      </fieldset>
+
+      <div class="form-actiuni">
+        <button type="submit">Trimite promoțiile</button>
+      </div>
+    </form>
+  </section>
+</div>
 {% endblock %}

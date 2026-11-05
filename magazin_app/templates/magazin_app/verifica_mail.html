@@ -1,15 +1,17 @@
 {% extends "magazin_app/baza.html" %}
 
+{% block title %}Verifică-ți emailul{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="alert alert-info text-center p-4 shadow-sm">
-        <h2>Verifica-ti emailul!</h2>
-
-        <p class="lead">
-            Am trimis un email la <strong>{{ email }}</strong>.
-        </p>
-
-        <p>Deschide emailul si apasa pe linkul de confirmare pentru a activa contul.</p>
-    </div>
+<div class="stare info">
+  <div class="stare-cap">
+    <i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i>
+    <h1>Verifică-ți emailul</h1>
+  </div>
+  <div class="stare-corp">
+    <p class="lead">Am trimis un link de confirmare la <strong>{{ email }}</strong>.</p>
+    <p>Deschide emailul și apasă pe link ca să activezi contul. Dacă nu-l găsești, uită-te și în Spam.</p>
+    <a class="btn-secundar" href="{% url 'login' %}">Mergi la autentificare</a>
+  </div>
 </div>
 {% endblock %}
